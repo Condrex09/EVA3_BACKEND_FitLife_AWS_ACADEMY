@@ -1,5 +1,5 @@
 [Unit]
-Description=Gunicorn daemon para FitLife Backend (INACAP EVA 3)
+Description=Gunicorn daemon para FitLife Backend (Receta AWS INACAP)
 After=network.target
 
 [Service]
@@ -8,12 +8,9 @@ Group=www-data
 WorkingDirectory=/home/ubuntu/EVA3_BACKEND_Fitlife
 EnvironmentFile=/home/ubuntu/EVA3_BACKEND_Fitlife/.env
 ExecStart=/home/ubuntu/EVA3_BACKEND_Fitlife/venv/bin/gunicorn \
-          --access-logfile - \
-          --error-logfile - \
           --workers 3 \
-          --bind unix:/run/gunicorn.sock \
+          --bind unix:/home/ubuntu/EVA3_BACKEND_Fitlife/fitlife.sock \
           config.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
-

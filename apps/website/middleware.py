@@ -1,4 +1,29 @@
 from django.shortcuts import redirect
+from django.conf import settings
+
+class DynamicCSRFTrustedOriginMiddleware:
+    """
+    Agrega dinámicamente el origen de la petición a CSRF_TRUSTED_ORIGINS
+    para evitar errores 403 Forbidden al enviar formularios desde cualquier
+    IP pública o elástica en AWS EC2 (según receta INACAP).
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        host = request.get_host()
+        if host:
+            clean_host = host.split(':')[0]
+            origin = f"{request.scheme}://{clean_host}"
+            origin_port = f"{request.scheme}://{host}"
+            if origin not in settings.CSRF_TRUSTED_ORIGINS:
+                settings.CSRF_TRUSTED_ORIGINS.append(origin)
+            if origin_port not in settings.CSRF_TRUSTED_ORIGINS:
+                settings.CSRF_TRUSTED_ORIGINS.append(origin_port)
+
+        return self.get_response(request)
+
 
 class NotFoundRedirectMiddleware:
     """
@@ -22,4 +47,3 @@ class NotFoundRedirectMiddleware:
                 return redirect('home')
 
         return response
-

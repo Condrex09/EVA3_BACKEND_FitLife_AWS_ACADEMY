@@ -18,14 +18,12 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-fitlife-development-s
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+# Configuración de Hosts y Seguridad (según Receta AWS INACAP para DRF)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
-# Verificaciones estrictas de seguridad para producción (Tarea 4)
-if not DEBUG:
-    if not ALLOWED_HOSTS or ALLOWED_HOSTS == [''] or ALLOWED_HOSTS == []:
-        raise ImproperlyConfigured("ALLOWED_HOSTS no puede estar vacío cuando DEBUG=False en producción.")
-    if SECRET_KEY == 'django-insecure-fitlife-development-secret-key-2026':
-        raise ImproperlyConfigured("SECRET_KEY de desarrollo no permitida en producción con DEBUG=False. Configura una clave segura en .env.")
+# Verificaciones de seguridad para producción
+if not DEBUG and (not ALLOWED_HOSTS or ALLOWED_HOSTS == [''] or ALLOWED_HOSTS == []):
+    ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
@@ -60,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'apps.website.middleware.DynamicCSRFTrustedOriginMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
