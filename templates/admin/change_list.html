@@ -1,0 +1,39 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="fitlife-admin-model-header" style="background: #181818; border-left: 4px solid #FFC400; padding: 12px 18px; margin-bottom: 16px; border-radius: 4px;">
+  <span style="color: #FFC400; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Gestión FitLife · {{ cl.opts.verbose_name_plural|capfirst }}</span>
+  <p style="margin: 4px 0 0 0; color: #BBB; font-size: 13px;">
+    {% if cl.opts.model_name == 'user' %}
+      Administración integral de usuarios y asignación de roles (Administrador, Recepción, Socio).
+    {% elif cl.opts.model_name == 'memberprofile' %}
+      Ficha de socios, visualización del Pase QR individual, datos de contacto y validación de RUT.
+    {% elif cl.opts.model_name == 'plan' %}
+      Catálogo comercial de planes de entrenamiento, precios en pesos chilenos y lista de beneficios.
+    {% elif cl.opts.model_name == 'membership' %}
+      Control de estados de membresías (Activa, Vencida, Congelada), vigencias y acciones por lote.
+    {% elif cl.opts.model_name == 'payment' %}
+      Registro contable de transacciones, métodos de pago simulados/manuales y auditoría de recaudación.
+    {% elif cl.opts.model_name == 'accesslog' %}
+      Bitácora en tiempo real de entradas y salidas por escaneo QR con motivos de denegación.
+    {% elif cl.opts.model_name == 'facilitysetting' %}
+      Parámetros de capacidad máxima y umbrales porcentuales del semáforo de aforo.
+    {% elif cl.opts.model_name == 'classtype' %}
+      Disciplinas deportivas ofertadas, niveles de intensidad y duración de las sesiones.
+    {% elif cl.opts.model_name == 'classsession' %}
+      Programación de clases grupales, salas asignadas, cupos disponibles y listas de espera.
+    {% elif cl.opts.model_name == 'booking' %}
+      Historial de reservas de clases, asignación de cupos y registro de asistencia presencial.
+    {% elif cl.opts.model_name == 'contactmessage' %}
+      Bandeja de mensajes y solicitudes enviadas a través del formulario de contacto público.
+    {% elif cl.opts.model_name == 'notification' %}
+      Alertas y notificaciones internas enviadas a los socios sobre sus reservas y membresías.
+    {% else %}
+      Panel de administración de datos relacionales del sistema deportivo FitLife.
+    {% endif %}
+  </p>
+</div>
+{{ block.super }}
+{% endblock %}
+

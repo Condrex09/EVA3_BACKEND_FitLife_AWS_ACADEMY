@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.25rem;">
+  <div style="max-width: 480px; margin: 0 auto;">
+    <div class="section-header" style="margin-bottom: 2rem;">
+      <span class="section-tag">Portal de Socios y Staff</span>
+      <h1 class="section-title">Iniciar Sesión</h1>
+      <p style="color: var(--brand-text-muted);">
+        Ingresa a tu cuenta para ver tu Pase QR y gestionar tus reservas.
+      </p>
+    </div>
+
+    <div class="form-card">
+      <form method="post" id="login-form">
+        {% csrf_token %}
+        {% if request.GET.next %}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% endif %}
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.username.id_for_label }}">Usuario o Correo Electrónico</label>
+          {{ form.username }}
+          {{ form.username.errors }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.password.id_for_label }}">Contraseña</label>
+          {{ form.password }}
+          {{ form.password.errors }}
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.85rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            {{ form.remember_me }}
+            <span>Recordarme en este equipo</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-yellow btn-block">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Ingresar a FitLife
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--brand-text-muted);">
+        ¿Aún no eres socio? 
+        <a href="{% url 'register' %}" style="font-weight: 700;">Inscríbete aquí</a>
+      </div>
+    </div>
+
+    {% if SHOW_DEMO_CREDENTIALS %}
+    <!-- Tarjeta de credenciales demo para la defensa evaluativa -->
+    <div id="demo-credentials-card" style="margin-top: 1.5rem; background: #161616; border: 1.5px solid var(--brand-yellow); border-radius: var(--border-radius); padding: 1.25rem 1.5rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-yellow); font-weight: 800;">
+          <i class="fa-solid fa-shield-halved"></i> Cuenta de administrador (demo)
+        </span>
+        <button type="button" id="btn-autocomplete-admin" class="btn btn-yellow btn-sm" style="font-size: 0.75rem; padding: 4px 10px;">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Autocompletar
+        </button>
+      </div>
+
+      <div style="font-size: 0.85rem; line-height: 1.6; color: var(--brand-text-muted);">
+        <div><strong style="color: #fff;">Usuario:</strong> <code style="color: var(--brand-yellow); background: #222; padding: 2px 6px; border-radius: 4px;" id="demo-user-val">{{ DEMO_ADMIN_USER }}</code> <span style="font-size: 0.75rem;">(o {{ DEMO_ADMIN_EMAIL }})</span></div>
+        <div style="margin-top: 4px;"><strong style="color: #fff;">Contraseña:</strong> <code style="color: var(--brand-yellow); background: #222; padding: 2px 6px; border-radius: 4px;" id="demo-pass-val">{{ DEMO_ADMIN_PASSWORD }}</code></div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var btn = document.getElementById('btn-autocomplete-admin');
+        if (btn) {
+          btn.addEventListener('click', function() {
+            var userInput = document.getElementById('{{ form.username.id_for_label }}');
+            var passInput = document.getElementById('{{ form.password.id_for_label }}');
+            if (userInput && passInput) {
+              userInput.value = '{{ DEMO_ADMIN_USER }}';
+              passInput.value = '{{ DEMO_ADMIN_PASSWORD }}';
+              userInput.focus();
+            }
+          });
+        }
+      });
+    </script>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

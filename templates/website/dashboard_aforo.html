@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard de Aforo en Tiempo Real - FitLife{% endblock %}
+
+{% block extra_head %}
+  <!-- Chart.js CDN oficial -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 1.25rem;">
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--brand-border);">
+    <div>
+      <span style="color: var(--brand-yellow); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">Monitoreo Continuo</span>
+      <h1 style="font-size: 2rem; font-weight: 900; text-transform: uppercase;">
+        <i class="fa-solid fa-chart-pie" style="color: var(--brand-yellow);"></i> Aforo en Tiempo Real
+      </h1>
+      <p style="color: var(--brand-text-muted); font-size: 0.9rem;">
+        Sincronización en vivo cada 5 segundos mediante API REST (`/api/aforo/`).
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+      <span id="liveIndicator" style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #28A745; font-weight: 700;">
+        <span style="width: 10px; height: 10px; background: #28A745; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;"></span> EN VIVO
+      </span>
+      <a href="{% url 'reception-access' %}" class="btn btn-yellow btn-sm">
+        <i class="fa-solid fa-qrcode"></i> Ir a Control de Acceso
+      </a>
+    </div>
+  </div>
+
+  <!-- Banner de Alerta Crítica de Aforo (Tarea 8.3) -->
+  <div id="aforoDangerBanner" class="alert alert-danger" style="display: {% if aforo_data.status_color == 'red' %}flex{% else %}none{% endif %}; align-items: center; gap: 12px; margin-bottom: 2rem; border-left: 6px solid #dc3545; background: #2a0808; color: #ff6b6b; font-weight: 700;">
+    <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.5rem;"></i>
+    <div>
+      <span style="font-size: 1rem; text-transform: uppercase;">¡Alerta de Sobrecupo en Sede!</span>
+      <p style="margin: 0; font-size: 0.85rem; font-weight: 400; color: #ffc9c9;">
+        El recinto ha superado el 85% de capacidad máxima permitida. Nuevos ingresos serán denegados automáticamente al alcanzar el límite total.
+      </p>
+    </div>
+  </div>
+
+  <!-- Tarjeta Principal de Aforo -->
+  <div class="aforo-counter-card" style="margin-bottom: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <span style="font-size: 0.9rem; font-weight: 800; color: #AAA; text-transform: uppercase;">
+        {{ aforo_data.facility_name }}
+      </span>
+      <span id="aforoStatusPill" class="badge {% if aforo_data.status_color == 'red' %}badge-high{% elif aforo_data.status_color == 'yellow' %}badge-medium{% else %}badge-low{% endif %}">
+        {{ aforo_data.status_text }}
+      </span>
+    </div>
+
+    <div style="display: flex; justify-content: center; align-items: baseline; gap: 1rem;">
+      <div id="aforoCurrentCount" class="aforo-number">{{ aforo_data.current_count }}</div>
+      <div style="font-size: 2rem; font-weight: 800; color: #888;">
+        / <span id="aforoMaxCapacity">{{ aforo_data.max_capacity }}</span> personas
+      </div>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-bar-container">
+      <div id="aforoProgressBar" class="progress-bar-fill {% if aforo_data.status_color == 'red' %}progress-fill-red{% elif aforo_data.status_color == 'yellow' %}progress-fill-yellow{% else %}progress-fill-green{% endif %}" style="width: {{ aforo_data.percentage }}%;"></div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--brand-text-muted);">
+      <span>Ocupación de la sede: <strong id="aforoPercentage" style="color: #FFF;">{{ aforo_data.percentage }}%</strong></span>
+      <span>Umbrales: <span style="color: #FFC107;">60% (Advertencia)</span> · <span style="color: #DC3545;">85% (Crítico)</span></span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+      
+      <!-- Panel Gráfico Chart.js -->
+      <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1.5rem;">
+          <i class="fa-solid fa-chart-column" style="color: var(--brand-yellow);"></i> Distribución de Ingresos por Hora (Hoy)
+        </h3>
+        <div style="position: relative; height: 280px; width: 100%;">
+          <canvas id="aforoChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Panel Lista de Socios Adentro -->
+      <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+          <i class="fa-solid fa-users" style="color: var(--brand-yellow);"></i> Socios Actualmente Dentro
+        </h3>
+        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Socio</th>
+                <th>Hora Entrada</th>
+              </tr>
+            </thead>
+            <tbody id="peopleInsideTableBody">
+              {% for p in aforo_data.people_inside %}
+                <tr>
+                  <td><strong>#{{ forloop.counter }}</strong></td>
+                  <td>{{ p.name }} <small style="color: #888;">({{ p.rut }})</small></td>
+                  <td><span class="badge badge-low">{{ p.entry_time }}</span></td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="3" class="text-center" style="color: #888; padding: 1.5rem;">No hay personas dentro del recinto actualmente.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    50% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+  }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'js/aforo.js' %}"></script>
+{% endblock %}
+

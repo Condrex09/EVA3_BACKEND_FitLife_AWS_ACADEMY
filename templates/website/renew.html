@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Renovar Membresía - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.25rem;">
+  <div style="max-width: 650px; margin: 0 auto;">
+    <div class="section-header" style="margin-bottom: 2rem;">
+      <span class="section-tag">Extensión de Membresía</span>
+      <h1 class="section-title">Renueva tu Plan FitLife</h1>
+      <p style="color: var(--brand-text-muted);">
+        Mantén tu acceso ininterrumpido a la sala de entrenamiento y reservas grupales.
+      </p>
+    </div>
+
+    <div class="form-card">
+      <div style="background: var(--brand-dark); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border); margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 0.5rem;">
+          <span>Plan a renovar:</span>
+          <strong>{{ plan.name }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 0.5rem;">
+          <span>Duración de extensión:</span>
+          <strong>{{ plan.duration_days }} días adicionados</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800; color: var(--brand-yellow); border-top: 1px solid var(--brand-border); padding-top: 0.75rem; margin-top: 0.75rem;">
+          <span>Total renovación:</span>
+          <span>${{ plan.monthly_price|floatformat:0 }} CLP</span>
+        </div>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.card_holder.id_for_label }}">Nombre del Titular</label>
+          {{ form.card_holder }}
+          {{ form.card_holder.errors }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.card_number.id_for_label }}">Número de Tarjeta</label>
+          {{ form.card_number }}
+          <small style="color: #888;">Simulación: Termina en 0000 para rechazar, cualquier otra aprueba.</small>
+          {{ form.card_number.errors }}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.card_expiry.id_for_label }}">Vencimiento (MM/AA)</label>
+            {{ form.card_expiry }}
+            {{ form.card_expiry.errors }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="{{ form.card_cvv.id_for_label }}">CVV</label>
+            {{ form.card_cvv }}
+            {{ form.card_cvv.errors }}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-yellow btn-block" style="margin-top: 1rem;">
+          <i class="fa-solid fa-arrows-rotate"></i> Confirmar y Renovar Plan (${{ plan.monthly_price|floatformat:0 }} CLP)
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

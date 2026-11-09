@@ -1,0 +1,767 @@
+/* ==========================================================================
+   FitLife - Hoja de Estilos Principal (Mobile-First / Inspiración Smart Fit)
+   Autor: Benjamin Gomez · Sección AP-N4-C1 · INACAP · EVA 3 Backend
+   ========================================================================== */
+
+:root {
+  --brand-yellow: #FFC400;
+  --brand-yellow-hover: #E0AB00;
+  --brand-black: #111111;
+  --brand-dark: #181818;
+  --brand-surface: #222222;
+  --brand-card: #282828;
+  --brand-border: #383838;
+  --brand-text: #F5F5F5;
+  --brand-text-muted: #A0A0A0;
+  --brand-success: #28A745;
+  --brand-warning: #FFC107;
+  --brand-danger: #DC3545;
+  --brand-info: #17A2B8;
+  --font-main: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --transition: all 0.25s ease-in-out;
+}
+
+/* Reset y base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--brand-black);
+  color: var(--brand-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--brand-yellow);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--brand-yellow-hover);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Contenedor responsivo */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ==========================================================================
+   Barra de Navegación (Navbar Fija)
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(17, 17, 17, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--brand-yellow);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  height: 48px;
+}
+
+.navbar-brand img {
+  height: 44px;
+}
+
+.nav-menu {
+  display: none;
+  list-style: none;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-link {
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--brand-yellow);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Botón Hamburguesa Móvil */
+.nav-toggle {
+  display: block;
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+@media (min-width: 900px) {
+  .nav-menu {
+    display: flex;
+  }
+  .nav-toggle {
+    display: none;
+  }
+}
+
+/* Menú móvil desplegable */
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  background-color: var(--brand-dark);
+  padding: 1rem;
+  border-top: 1px solid var(--brand-border);
+}
+
+.mobile-nav.open {
+  display: flex;
+}
+
+.mobile-nav .nav-link {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   Botones y Elementos de Acción
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.65rem 1.4rem;
+  border-radius: 30px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-yellow {
+  background-color: var(--brand-yellow);
+  color: var(--brand-black);
+  border-color: var(--brand-yellow);
+}
+
+.btn-yellow:hover {
+  background-color: var(--brand-yellow-hover);
+  border-color: var(--brand-yellow-hover);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(255, 196, 0, 0.4);
+}
+
+.btn-outline-yellow {
+  background-color: transparent;
+  color: var(--brand-yellow);
+  border-color: var(--brand-yellow);
+}
+
+.btn-outline-yellow:hover {
+  background-color: var(--brand-yellow);
+  color: var(--brand-black);
+}
+
+.btn-dark {
+  background-color: var(--brand-surface);
+  color: #FFFFFF;
+  border-color: var(--brand-border);
+}
+
+.btn-dark:hover {
+  background-color: var(--brand-card);
+  border-color: var(--brand-yellow);
+  color: var(--brand-yellow);
+}
+
+.btn-danger {
+  background-color: var(--brand-danger);
+  color: #FFFFFF;
+}
+
+.btn-danger:hover {
+  background-color: #bd2130;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ==========================================================================
+   Hero Section & Portada
+   ========================================================================== */
+.hero-section {
+  position: relative;
+  background: linear-gradient(135deg, rgba(17, 17, 17, 0.92) 0%, rgba(24, 24, 24, 0.85) 100%),
+              radial-gradient(circle at 80% 20%, rgba(255, 196, 0, 0.15) 0%, transparent 60%);
+  padding: 4rem 0 5rem 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--brand-border);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 850px) {
+  .hero-grid {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+.hero-tag {
+  display: inline-block;
+  background-color: rgba(255, 196, 0, 0.15);
+  color: var(--brand-yellow);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 196, 0, 0.4);
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+.hero-title span {
+  color: var(--brand-yellow);
+}
+
+.hero-desc {
+  font-size: 1.1rem;
+  color: var(--brand-text-muted);
+  margin-bottom: 2rem;
+  max-width: 560px;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Tarjeta de la Sede en Hero */
+.facility-card-hero {
+  background-color: var(--brand-surface);
+  border: 2px solid var(--brand-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+.facility-card-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 2rem;
+  right: 2rem;
+  height: 4px;
+  background-color: var(--brand-yellow);
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   Tarjetas de Planes (Estilo Smart Fit)
+   ========================================================================= */
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-tag {
+  color: var(--brand-yellow);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .plans-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.plan-card {
+  background-color: var(--brand-surface);
+  border: 2px solid var(--brand-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  position: relative;
+}
+
+.plan-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--brand-yellow);
+  box-shadow: 0 12px 30px rgba(255, 196, 0, 0.15);
+}
+
+.plan-card.featured {
+  border-color: var(--brand-yellow);
+  background-color: #242217;
+}
+
+.plan-badge-featured {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--brand-yellow);
+  color: var(--brand-black);
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+}
+
+.plan-name {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.plan-price-box {
+  margin: 1.5rem 0;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--brand-border);
+}
+
+.plan-price-label {
+  font-size: 0.8rem;
+  color: var(--brand-text-muted);
+  text-transform: uppercase;
+}
+
+.plan-price {
+  font-size: 2.3rem;
+  font-weight: 900;
+  color: var(--brand-yellow);
+  line-height: 1;
+}
+
+.plan-price small {
+  font-size: 0.9rem;
+  color: var(--brand-text-muted);
+  font-weight: 600;
+}
+
+.plan-enrollment {
+  font-size: 0.85rem;
+  color: var(--brand-text-muted);
+  margin-top: 0.25rem;
+}
+
+.plan-benefits {
+  list-style: none;
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.plan-benefits li {
+  padding: 0.6rem 0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.plan-benefits li i {
+  color: var(--brand-yellow);
+  margin-top: 3px;
+}
+
+/* ==========================================================================
+   Grilla de Clases
+   ========================================================================== */
+.classes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 600px) {
+  .classes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .classes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.class-card {
+  background-color: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  transition: var(--transition);
+}
+
+.class-card:hover {
+  border-color: var(--brand-yellow);
+  transform: translateY(-4px);
+}
+
+.class-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.badge-low {
+  background-color: var(--brand-success);
+  color: #FFFFFF;
+}
+
+.badge-medium {
+  background-color: var(--brand-warning);
+  color: #000000;
+}
+
+.badge-high {
+  background-color: var(--brand-danger);
+  color: #FFFFFF;
+}
+
+.badge-active {
+  background-color: var(--brand-success);
+  color: #FFFFFF;
+}
+
+.badge-expired {
+  background-color: var(--brand-danger);
+  color: #FFFFFF;
+}
+
+.badge-frozen {
+  background-color: var(--brand-info);
+  color: #000000;
+}
+
+/* ==========================================================================
+   Formularios
+   ========================================================================== */
+.form-card {
+  background-color: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: #E0E0E0;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  background-color: var(--brand-dark);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-sm);
+  color: #FFFFFF;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--brand-yellow);
+  box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
+}
+
+/* ==========================================================================
+   Alertas y Mensajes
+   ========================================================================== */
+.messages-container {
+  margin: 1rem 0;
+}
+
+.alert {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alert-success {
+  background-color: rgba(40, 167, 69, 0.2);
+  border: 1px solid var(--brand-success);
+  color: #6ee7b7;
+}
+
+.alert-danger, .alert-error {
+  background-color: rgba(220, 53, 69, 0.2);
+  border: 1px solid var(--brand-danger);
+  color: #fca5a5;
+}
+
+.alert-warning {
+  background-color: rgba(255, 193, 7, 0.2);
+  border: 1px solid var(--brand-warning);
+  color: #fde047;
+}
+
+.alert-info {
+  background-color: rgba(23, 162, 184, 0.2);
+  border: 1px solid var(--brand-info);
+  color: #7dd3fc;
+}
+
+/* ==========================================================================
+   Dashboard y Aforo
+   ========================================================================== */
+.aforo-counter-card {
+  background-color: var(--brand-surface);
+  border: 2px solid var(--brand-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+
+.aforo-number {
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--brand-yellow);
+}
+
+.progress-bar-container {
+  height: 24px;
+  background-color: var(--brand-dark);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  border: 1px solid var(--brand-border);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  transition: width 0.5s ease-in-out, background-color 0.5s ease;
+}
+
+.progress-fill-green {
+  background-color: var(--brand-success);
+}
+
+.progress-fill-yellow {
+  background-color: var(--brand-warning);
+}
+
+.progress-fill-red {
+  background-color: var(--brand-danger);
+}
+
+/* ==========================================================================
+   Tablas Estilizadas
+   ========================================================================== */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table-custom {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table-custom th {
+  background-color: var(--brand-dark);
+  color: var(--brand-yellow);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  padding: 0.85rem 1rem;
+  border-bottom: 2px solid var(--brand-border);
+}
+
+.table-custom td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--brand-border);
+  font-size: 0.9rem;
+}
+
+.table-custom tr:hover td {
+  background-color: rgba(255, 196, 0, 0.03);
+}
+
+/* ==========================================================================
+   Pie de Página Obligatorio
+   ========================================================================== */
+.site-footer {
+  margin-top: auto;
+  background-color: #0A0A0A;
+  border-top: 2px solid var(--brand-yellow);
+  padding: 3rem 0 1.5rem 0;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.footer-brand img {
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.footer-title {
+  color: var(--brand-yellow);
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.footer-links {
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  color: var(--brand-text-muted);
+}
+
+.footer-links a:hover {
+  color: var(--brand-yellow);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--brand-border);
+  font-size: 0.85rem;
+  color: var(--brand-text-muted);
+}
+
+.footer-author-badge {
+  display: inline-block;
+  background-color: rgba(255, 196, 0, 0.1);
+  color: var(--brand-yellow);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  border: 1px solid rgba(255, 196, 0, 0.3);
+}
+

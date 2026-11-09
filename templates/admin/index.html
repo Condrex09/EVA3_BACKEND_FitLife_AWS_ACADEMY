@@ -1,0 +1,36 @@
+{% extends "admin/index.html" %}
+{% load fitlife_tags %}
+
+{% block content %}
+  {% get_admin_metrics as metrics %}
+  
+  <!-- Tarjetas de Métricas en Tiempo Real FitLife -->
+  <div class="fitlife-metrics-container">
+    <div class="fitlife-metric-card">
+      <div class="fitlife-metric-title">Socios Activos</div>
+      <div class="fitlife-metric-value" style="color: #28A745;">{{ metrics.active_members }}</div>
+      <div class="fitlife-metric-desc">Membresías vigentes hoy</div>
+    </div>
+
+    <div class="fitlife-metric-card">
+      <div class="fitlife-metric-title">Ingresos de Hoy</div>
+      <div class="fitlife-metric-value" style="color: #FFC400;">${{ metrics.today_income|floatformat:0 }} CLP</div>
+      <div class="fitlife-metric-desc">Pagos aprobados del día</div>
+    </div>
+
+    <div class="fitlife-metric-card">
+      <div class="fitlife-metric-title">Aforo Actual de la Sede</div>
+      <div class="fitlife-metric-value" style="color: #17A2B8;">{{ metrics.current_occupancy }} / {{ metrics.max_capacity }}</div>
+      <div class="fitlife-metric-desc">Personas dentro del recinto</div>
+    </div>
+
+    <div class="fitlife-metric-card">
+      <div class="fitlife-metric-title">Reservas de Clases Hoy</div>
+      <div class="fitlife-metric-value" style="color: #FFFFFF;">{{ metrics.today_bookings }}</div>
+      <div class="fitlife-metric-desc">Cupos confirmados para hoy</div>
+    </div>
+  </div>
+
+  {{ block.super }}
+{% endblock %}
+

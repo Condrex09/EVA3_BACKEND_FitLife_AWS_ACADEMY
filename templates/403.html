@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Acceso Restringido (403) - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 6rem 1rem; text-align: center;">
+  <div style="max-width: 550px; margin: 0 auto; background: var(--brand-surface); padding: 3rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--brand-border);">
+    <h1 style="font-size: 6rem; font-weight: 900; color: var(--brand-danger); line-height: 1;">403</h1>
+    <h2 style="font-size: 1.8rem; margin: 1rem 0; text-transform: uppercase;">Acceso Denegado</h2>
+    <p style="color: var(--brand-text-muted); margin-bottom: 2rem;">
+      No posees los privilegios o el rol necesario para acceder a este recurso.
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-yellow">
+      <i class="fa-solid fa-house"></i> Volver al Inicio
+    </a>
+  </div>
+</div>
+{% endblock %}
+

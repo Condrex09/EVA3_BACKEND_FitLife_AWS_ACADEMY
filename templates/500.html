@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Error de Servidor (500) - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 6rem 1rem; text-align: center;">
+  <div style="max-width: 550px; margin: 0 auto; background: var(--brand-surface); padding: 3rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--brand-border);">
+    <h1 style="font-size: 6rem; font-weight: 900; color: var(--brand-warning); line-height: 1;">500</h1>
+    <h2 style="font-size: 1.8rem; margin: 1rem 0; text-transform: uppercase;">Error Interno</h2>
+    <p style="color: var(--brand-text-muted); margin-bottom: 2rem;">
+      Ocurrió un problema inesperado en el servidor backend. El equipo técnico ha sido notificado.
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-yellow">
+      <i class="fa-solid fa-house"></i> Volver al Inicio
+    </a>
+  </div>
+</div>
+{% endblock %}
+

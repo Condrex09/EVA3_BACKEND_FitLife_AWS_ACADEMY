@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Control de Acceso QR - Recepción FitLife{% endblock %}
+
+{% block extra_head %}
+  <!-- html5-qrcode para lectura por cámara web (CDN oficial) -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 1.25rem;">
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--brand-border);">
+    <div>
+      <span style="color: var(--brand-yellow); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">Estación de Recepción</span>
+      <h1 style="font-size: 2rem; font-weight: 900; text-transform: uppercase;">
+        <i class="fa-solid fa-qrcode" style="color: var(--brand-yellow);"></i> Control y Validación de Acceso QR
+      </h1>
+      <p style="color: var(--brand-text-muted); font-size: 0.9rem;">
+        Validación de baja latencia con verificación automática de vigencia de membresía, alternancia Entrada/Salida y control de aforo.
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="{% url 'dashboard-aforo' %}" class="btn btn-outline-yellow btn-sm">
+        <i class="fa-solid fa-chart-pie"></i> Ver Aforo en Vivo
+      </a>
+      <a href="{% url 'reception-members' %}" class="btn btn-dark btn-sm">
+        <i class="fa-solid fa-magnifying-glass"></i> Buscar Socios
+      </a>
+    </div>
+  </div>
+
+  <!-- Contenedor Superior: Tarjeta Grande de Resultado -->
+  <div id="qrResultCard" style="display: none; border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2.5rem; text-align: center; border: 3px solid #383838; background: #1C1C1C; box-shadow: var(--shadow-card); transition: all 0.3s ease;">
+    <h2 id="qrResultTitle" style="font-size: 2.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px;">
+      RESPUESTA DE ACCESO
+    </h2>
+    <p id="qrResultMessage" style="font-size: 1.2rem; margin-bottom: 1rem; color: #FFFFFF; font-weight: 600;">
+      Detalle del resultado.
+    </p>
+    <div id="qrResultMember" style="font-size: 1.1rem; color: #E0E0E0; margin-bottom: 0.5rem;"></div>
+    <div id="qrResultMeta" style="font-size: 0.9rem; color: #AAAAAA;"></div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+      
+      <!-- Panel 1: Escáner con Cámara Web -->
+      <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+          <i class="fa-solid fa-camera"></i> Escáner por Cámara
+        </h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+          Apunta la cámara del dispositivo hacia el código QR del socio para una lectura instantánea.
+        </p>
+
+        <!-- Aviso si el contexto no es seguro (Tarea 9.2) -->
+        <div id="insecureContextWarning" style="display: none; background: #332600; border: 1px solid #FFC107; color: #FFE082; padding: 0.85rem; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.4;">
+          <i class="fa-solid fa-triangle-exclamation" style="color: #FFC107;"></i>
+          <strong>Aviso de Seguridad del Navegador:</strong> La cámara web requiere HTTPS o localhost. En despliegues HTTP por IP pública en AWS EC2, usa el panel contiguo de <strong>Simulación Manual</strong> para validar pases QR.
+        </div>
+
+        <!-- Contenedor del lector QR -->
+        <div id="qr-reader" style="width: 100%; border-radius: var(--radius-sm); overflow: hidden; background: #000;"></div>
+      </div>
+
+      <!-- Panel 2: Simulador Manual por Token -->
+      <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h3 style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+            <i class="fa-solid fa-keyboard"></i> Simulación Manual por Token
+          </h3>
+          <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+            Permite probar el sistema pegando o escribiendo el token UUID del socio sin necesidad de cámara.
+          </p>
+
+          {% if demo_tokens %}
+            <!-- Selector para demostración en la defensa en vivo (Tarea 9.3) -->
+            <div style="margin-bottom: 1.25rem; background: #161616; padding: 0.85rem; border-radius: var(--radius-sm); border: 1.5px dashed var(--brand-yellow);">
+              <label for="demoTokenSelect" style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--brand-yellow); margin-bottom: 0.4rem;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Simular con socio demo (Defensa):
+              </label>
+              <select id="demoTokenSelect" class="form-control" style="font-size: 0.85rem; background: #222; color: #fff; border: 1px solid #444;">
+                <option value="">-- Elige un socio demo para autocompletar --</option>
+                {% for dt in demo_tokens %}
+                  <option value="{{ dt.token }}">{{ dt.label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+
+          <form id="manualQrForm">
+            <div class="form-group">
+              <label class="form-label" for="manualQrInput">Token UUID del Pase QR</label>
+              <input type="text" id="manualQrInput" class="form-control" placeholder="Ej: e4b0c2a1-7d92-4f8e-9081-..." required>
+            </div>
+            <button type="submit" class="btn btn-yellow btn-block">
+              <i class="fa-solid fa-bolt"></i> Simular Validación de Pase
+            </button>
+          </form>
+        </div>
+
+        <div style="background: var(--brand-dark); border: 1px dashed var(--brand-border); border-radius: var(--radius-sm); padding: 1rem; margin-top: 1.5rem; font-size: 0.8rem; color: #AAA;">
+          <i class="fa-solid fa-info-circle" style="color: var(--brand-yellow);"></i> <strong>Reglas Operativas:</strong><br>
+          • Si el socio no registra membresía activa o está vencida &rarr; <span style="color: var(--brand-danger);">ACCESO DENEGADO</span>.<br>
+          • Si la membresía está congelada &rarr; <span style="color: var(--brand-info);">ACCESO DENEGADO</span>.<br>
+          • Si el socio está fuera &rarr; Registra <strong>ENTRADA</strong>.<br>
+          • Si el socio está dentro &rarr; Registra <strong>SALIDA</strong>.<br>
+          • Si el aforo de la sede está lleno al ingresar &rarr; <span style="color: var(--brand-danger);">DENEGADO POR AFORO</span>.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Historial de Últimos 10 Accesos -->
+  <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem;">
+    <h3 style="font-size: 1.25rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1.25rem;">
+      <i class="fa-solid fa-clock-rotate-left" style="color: var(--brand-yellow);"></i> Últimos Accesos Registrados
+    </h3>
+
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Socio</th>
+            <th>Dirección</th>
+            <th>Resultado</th>
+            <th>Observación / Motivo</th>
+          </tr>
+        </thead>
+        <tbody id="recentLogsTableBody">
+          {% for log in recent_logs %}
+            <tr>
+              <td><strong>{{ log.timestamp|date:"H:i:s" }}</strong></td>
+              <td>
+                {% if log.member %}
+                  {{ log.member.get_full_name|default:log.member.username }}
+                  {% if log.member.profile %}
+                    <small style="color: #888;">({{ log.member.profile.formatted_rut }})</small>
+                  {% endif %}
+                {% else %}
+                  <span style="color: #888;">Anónimo / Desconocido</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if log.direction == 'IN' %}
+                  <span class="badge badge-low">Entrada</span>
+                {% else %}
+                  <span class="badge badge-medium">Salida</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if log.result == 'ALLOWED' %}
+                  <span class="badge badge-low">PERMITIDO</span>
+                {% else %}
+                  <span class="badge badge-high">DENEGADO</span>
+                {% endif %}
+              </td>
+              <td>
+                <small>{{ log.get_deny_reason_display|default:"Acceso regular" }}</small>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-center" style="color: #888; padding: 2rem;">No hay registros recientes de acceso.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'js/reception.js' %}"></script>
+{% endblock %}
+

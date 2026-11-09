@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Buscador de Socios - Recepción FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 1.25rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--brand-border);">
+    <div>
+      <span style="color: var(--brand-yellow); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">Estación de Recepción</span>
+      <h1 style="font-size: 2rem; font-weight: 900; text-transform: uppercase;">
+        <i class="fa-solid fa-users" style="color: var(--brand-yellow);"></i> Búsqueda de Socios
+      </h1>
+    </div>
+    <a href="{% url 'reception-access' %}" class="btn btn-yellow btn-sm">
+      <i class="fa-solid fa-qrcode"></i> Volver a Control de Acceso
+    </a>
+  </div>
+
+  <div class="form-card" style="margin-bottom: 2.5rem;">
+    <form method="get" action="{% url 'reception-members' %}" style="display: flex; gap: 1rem;">
+      <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar por Nombre, Apellido, Usuario o RUT (ej: 12.345.678-5)..." autofocus>
+      <button type="submit" class="btn btn-yellow">
+        <i class="fa-solid fa-magnifying-glass"></i> Buscar
+      </button>
+    </form>
+  </div>
+
+  {% if query %}
+    <h3 style="font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+      Resultados para "{{ query }}" ({{ members|length }})
+    </h3>
+
+    {% if members %}
+      <div class="table-responsive" style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-md);">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Socio</th>
+              <th>RUT</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Membresía</th>
+              <th>Ficha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in members %}
+              <tr>
+                <td><strong>{{ m.get_full_name|default:m.username }}</strong></td>
+                <td>{{ m.profile.formatted_rut|default:"-" }}</td>
+                <td>{{ m.email }}</td>
+                <td>{{ m.profile.phone|default:"-" }}</td>
+                <td>
+                  {% with latest=m.memberships.all|dictsortreversed:"end_date"|first %}
+                    {% if latest %}
+                      {% if latest.status == 'ACTIVE' %}
+                        <span class="badge badge-low">ACTIVA ({{ latest.plan.name }})</span>
+                      {% elif latest.status == 'FROZEN' %}
+                        <span class="badge badge-medium">CONGELADA</span>
+                      {% else %}
+                        <span class="badge badge-high">VENCIDA</span>
+                      {% endif %}
+                    {% else %}
+                      <span class="badge" style="background: #555;">SIN PLAN</span>
+                    {% endif %}
+                  {% endwith %}
+                </td>
+                <td>
+                  <a href="{% url 'reception-member-detail' m.id %}" class="btn btn-outline-yellow btn-sm">
+                    Ver Ficha
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-md); padding: 3rem; text-align: center; color: var(--brand-text-muted);">
+        No se encontraron socios que coincidan con "{{ query }}".
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}
+

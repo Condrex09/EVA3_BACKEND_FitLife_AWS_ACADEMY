@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Panel FitLife | {{ title }}{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <!-- Fuente Google Fonts y estilos personalizados FitLife para Django Admin -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+      <img src="{% static 'img/logo.svg' %}" alt="FitLife" style="height: 38px; display: inline-block;">
+      <span style="font-size: 20px; font-weight: 900; color: #FFFFFF; letter-spacing: -0.5px;">
+        PANEL <span class="yellow-accent" style="color: #FFC400;">FITLIFE</span>
+      </span>
+    </a>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  <div class="admin-footer-fitlife">
+    <p style="margin-bottom: 6px;">FitLife Centro Deportivo &copy; 2026 — Plataforma de Gestión Backend y Control de Acceso</p>
+    <strong>Desarrollado por Benjamin Gomez · Sección AP-N4-C1 · INACAP · EVA 3 Desarrollo Backend</strong>
+  </div>
+{% endblock %}
+

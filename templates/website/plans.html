@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Planes y Membresías - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.25rem;">
+  <div class="section-header">
+    <span class="section-tag">Transparencia Total</span>
+    <h1 class="section-title">Nuestros Planes y Tarifas</h1>
+    <p style="color: var(--brand-text-muted); max-width: 600px; margin: 0 auto;">
+      Elige la modalidad que mejor se adapte a tu ritmo de entrenamiento y objetivos.
+    </p>
+  </div>
+
+  <div class="plans-grid">
+    {% for plan in plans %}
+      <div class="plan-card {% if plan.is_featured %}featured{% endif %}">
+        {% if plan.is_featured %}
+          <div class="plan-badge-featured">El más ventajoso</div>
+        {% endif %}
+
+        <h3 class="plan-name">{{ plan.name }}</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.9rem; min-height: 48px;">
+          {{ plan.description }}
+        </p>
+
+        <div class="plan-price-box">
+          <span class="plan-price-label">Mensualidad</span>
+          <div class="plan-price">
+            ${{ plan.monthly_price|floatformat:0 }} <small>CLP/mes</small>
+          </div>
+          <div class="plan-enrollment">
+            {% if plan.enrollment_price > 0 %}
+              Matrícula de inscripción: ${{ plan.enrollment_price|floatformat:0 }} CLP
+            {% else %}
+              <span style="color: var(--brand-success); font-weight: 700;">¡Matrícula Costo Cero!</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="font-size: 0.85rem; color: #AAA; margin-bottom: 1rem;">
+          <i class="fa-solid fa-calendar-check" style="color: var(--brand-yellow);"></i> 
+          Duración: <strong>{{ plan.duration_days }} días</strong> · 
+          Fidelidad: <strong>{% if plan.loyalty_months > 0 %}{{ plan.loyalty_months }} meses{% else %}Sin permanencia mínima{% endif %}</strong>
+        </div>
+
+        <ul class="plan-benefits">
+          {% for benefit in plan.benefits %}
+            <li><i class="fa-solid fa-check"></i> {{ benefit }}</li>
+          {% empty %}
+            <li><i class="fa-solid fa-check"></i> Acceso ilimitado a sala de pesas y máquinas</li>
+            <li><i class="fa-solid fa-check"></i> Pase QR para validación express</li>
+          {% endfor %}
+        </ul>
+
+        <a href="{% url 'checkout' plan.slug %}" class="btn {% if plan.is_featured %}btn-yellow{% else %}btn-dark{% endif %} btn-block">
+          <i class="fa-solid fa-cart-shopping"></i> Contratar {{ plan.name }}
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Suscripción {{ plan.name }} - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.25rem;">
+  <div style="max-width: 750px; margin: 0 auto;">
+    <div class="section-header" style="margin-bottom: 2rem;">
+      <span class="section-tag">Pasarela Segura (Simulación)</span>
+      <h1 class="section-title">Finaliza tu Suscripción</h1>
+      <p style="color: var(--brand-text-muted);">
+        Contrata el plan <strong>{{ plan.name }}</strong> e inicia tus entrenamientos hoy mismo.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+      <!-- Resumen del Pedido -->
+      <div style="background: var(--brand-dark); border: 1px solid var(--brand-border); border-radius: var(--radius-md); padding: 1.75rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem; color: var(--brand-yellow);">
+          Resumen del Plan
+        </h3>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
+          <span>Plan seleccionado:</span>
+          <strong>{{ plan.name }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
+          <span>Mensualidad:</span>
+          <span>${{ plan.monthly_price|floatformat:0 }} CLP</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem;">
+          <span>Matrícula de inscripción:</span>
+          <span>${{ plan.enrollment_price|floatformat:0 }} CLP</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--brand-border); font-size: 1.3rem; font-weight: 900; color: var(--brand-yellow);">
+          <span>Total a pagar hoy:</span>
+          <span>${{ total_amount|floatformat:0 }} CLP</span>
+        </div>
+      </div>
+
+      <!-- Formulario Simulado de Tarjeta -->
+      <div class="form-card">
+        <div style="background: rgba(255, 196, 0, 0.1); border: 1px dashed var(--brand-yellow); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #E0E0E0;">
+          <i class="fa-solid fa-circle-info" style="color: var(--brand-yellow);"></i> <strong>Ambiente de Simulación Académica:</strong><br>
+          • Puedes ingresar cualquier número de tarjeta válido de 16 dígitos.<br>
+          • Para probar un <strong>pago rechazado</strong>, utiliza una tarjeta terminada en <code>0000</code>.
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label class="form-label" for="{{ form.card_holder.id_for_label }}">Nombre del Titular</label>
+            {{ form.card_holder }}
+            {{ form.card_holder.errors }}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="{{ form.card_number.id_for_label }}">Número de Tarjeta</label>
+            {{ form.card_number }}
+            {{ form.card_number.errors }}
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="{{ form.card_expiry.id_for_label }}">Vencimiento (MM/AA)</label>
+              {{ form.card_expiry }}
+              {{ form.card_expiry.errors }}
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="{{ form.card_cvv.id_for_label }}">Código CVV</label>
+              {{ form.card_cvv }}
+              {{ form.card_cvv.errors }}
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-yellow btn-block" style="margin-top: 1rem;">
+            <i class="fa-solid fa-lock"></i> Pagar ${{ total_amount|floatformat:0 }} CLP y Activar Membresía
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

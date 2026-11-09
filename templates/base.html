@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}FitLife - Centro Deportivo{% endblock %}</title>
+  <meta name="description" content="FitLife: Plataforma moderna de entrenamiento, reservas y control de acceso inteligente.">
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/logo.svg' %}">
+  
+  <!-- Tipografía moderna Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Iconos (CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Estilos propios FitLife -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navbar fija -->
+  <header class="site-header">
+    <div class="container navbar">
+      <a href="{% url 'home' %}" class="navbar-brand">
+        <img src="{% static 'img/logo.svg' %}" alt="FitLife Logo">
+      </a>
+
+      <!-- Menú principal escritorio -->
+      <ul class="nav-menu">
+        <li><a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Inicio</a></li>
+        <li><a href="{% url 'plans' %}" class="nav-link {% if request.resolver_match.url_name == 'plans' %}active{% endif %}">Planes</a></li>
+        <li><a href="{% url 'classes-schedule' %}" class="nav-link {% if request.resolver_match.url_name == 'classes-schedule' %}active{% endif %}">Clases</a></li>
+        <li><a href="{% url 'facility' %}" class="nav-link {% if request.resolver_match.url_name == 'facility' %}active{% endif %}">Sede</a></li>
+        <li><a href="{% url 'contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contacto</a></li>
+        {% if user.is_authenticated and user.is_reception %}
+          <li><a href="{% url 'reception-access' %}" class="nav-link" style="color: #FFC400;"><i class="fa-solid fa-qrcode"></i> Recepción</a></li>
+          <li><a href="{% url 'dashboard-aforo' %}" class="nav-link" style="color: #FFC400;"><i class="fa-solid fa-chart-pie"></i> Aforo</a></li>
+        {% endif %}
+      </ul>
+
+      <!-- Acciones de Usuario -->
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          {% if user.is_staff %}
+            <a href="{% url 'admin:index' %}" class="btn btn-outline-yellow btn-sm" title="Panel de Administración">
+              <i class="fa-solid fa-shield-halved"></i> Panel Admin
+            </a>
+          {% endif %}
+          {% if user.role == 'MEMBER' %}
+            <a href="{% url 'booking-calendar' %}" class="btn btn-outline-yellow btn-sm">
+              <i class="fa-solid fa-calendar-check"></i> Reservar
+            </a>
+            <a href="{% url 'profile' %}" class="btn btn-yellow btn-sm">
+              <i class="fa-solid fa-user"></i> Mi Espacio
+              {% if UNREAD_NOTIFICATIONS_COUNT > 0 %}
+                <span style="background: #dc3545; color: #fff; border-radius: 50%; padding: 2px 6px; font-size: 10px; margin-left: 4px;">{{ UNREAD_NOTIFICATIONS_COUNT }}</span>
+              {% endif %}
+            </a>
+          {% elif not user.is_staff %}
+            <a href="{% url 'profile' %}" class="btn btn-yellow btn-sm">
+              <i class="fa-solid fa-user"></i> Mi Espacio
+            </a>
+          {% endif %}
+          <span style="font-size: 0.85rem; color: var(--brand-text-muted); display: inline-block; margin: 0 4px;">
+            {{ user.first_name|default:user.username }}
+          </span>
+          <form method="post" action="{% url 'logout' %}" style="display: inline-block; margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-dark btn-sm" title="Cerrar sesión" style="display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: none;">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-dark btn-sm">Ingresar</a>
+          <a href="{% url 'register' %}" class="btn btn-yellow btn-sm">¡Inscríbete ya!</a>
+        {% endif %}
+        <button class="nav-toggle" aria-label="Abrir menú de navegación">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menú desplegable móvil -->
+    <div class="mobile-nav">
+      <a href="{% url 'home' %}" class="nav-link">Inicio</a>
+      <a href="{% url 'plans' %}" class="nav-link">Planes</a>
+      <a href="{% url 'classes-schedule' %}" class="nav-link">Clases Grupales</a>
+      <a href="{% url 'facility' %}" class="nav-link">Nuestra Sede</a>
+      <a href="{% url 'contact' %}" class="nav-link">Contacto</a>
+      {% if user.is_authenticated %}
+        {% if user.role == 'MEMBER' %}
+          <a href="{% url 'profile' %}" class="nav-link"><i class="fa-solid fa-qrcode"></i> Mi Pase QR y Membresía</a>
+          <a href="{% url 'booking-calendar' %}" class="nav-link"><i class="fa-solid fa-calendar"></i> Reservar Clases</a>
+        {% else %}
+          <a href="{% url 'reception-access' %}" class="nav-link"><i class="fa-solid fa-qrcode"></i> Control de Acceso</a>
+          <a href="{% url 'dashboard-aforo' %}" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard de Aforo</a>
+          <a href="{% url 'admin:index' %}" class="nav-link" target="_blank"><i class="fa-solid fa-shield"></i> Panel Django Admin</a>
+        {% endif %}
+        <form method="post" action="{% url 'logout' %}" style="margin: 0; padding: 0;">
+          {% csrf_token %}
+          <button type="submit" class="nav-link" style="width: 100%; text-align: left; background: none; border: none; color: #dc3545; cursor: pointer; padding: 0.75rem 1rem; font-family: inherit; font-size: inherit;">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+          </button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="nav-link">Iniciar Sesión</a>
+        <a href="{% url 'register' %}" class="nav-link" style="color: #FFC400; font-weight: 800;">¡Inscríbete ya!</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Mensajes Flash de Django -->
+  <div class="container messages-container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          <span>{{ message }}</span>
+          <button type="button" style="background: none; border: none; color: inherit; cursor: pointer;" onclick="this.parentElement.remove();">&times;</button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Pie de Página Institucional Obligatorio -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="{% static 'img/logo.svg' %}" alt="FitLife">
+          <p style="color: var(--brand-text-muted); font-size: 0.9rem; max-width: 380px;">
+            Plataforma integral de gestión deportiva, control de aforo en tiempo real y validación de acceso inteligente para un entrenamiento de máximo nivel.
+          </p>
+        </div>
+        <div>
+          <h4 class="footer-title">Navegación</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'plans' %}">Planes y Precios</a></li>
+            <li><a href="{% url 'classes-schedule' %}">Horarios de Clases</a></li>
+            <li><a href="{% url 'facility' %}">Instalaciones de la Sede</a></li>
+            <li><a href="{% url 'contact' %}">Preguntas Frecuentes</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">Contacto</h4>
+          <p style="color: var(--brand-text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+            <i class="fa-solid fa-location-dot" style="color: var(--brand-yellow);"></i> Av. Apoquindo 4500, Santiago, Chile
+          </p>
+          <p style="color: var(--brand-text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+            <i class="fa-solid fa-envelope" style="color: var(--brand-yellow);"></i> contacto@fitlife.cl
+          </p>
+          <p style="color: var(--brand-text-muted); font-size: 0.9rem;">
+            <i class="fa-solid fa-phone" style="color: var(--brand-yellow);"></i> +56 2 2345 6789
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; {{ CURRENT_YEAR }} FitLife Centro Deportivo. Todos los derechos reservados.</p>
+        <div class="footer-author-badge">
+          {{ FOOTER_TEXT }}
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts base -->
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
+

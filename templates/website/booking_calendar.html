@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Reservar Clases Grupales - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3.5rem 1.25rem;">
+  <div class="section-header" style="margin-bottom: 2rem;">
+    <span class="section-tag">Cupos en Tiempo Real</span>
+    <h1 class="section-title">Reserva de Clases Grupales</h1>
+    <p style="color: var(--brand-text-muted); max-width: 600px; margin: 0 auto;">
+      Asegura tu lugar en Spinning, Yoga, Funcional, Zumba o HIIT. Si la clase está llena, puedes sumarte a la lista de espera con ascenso automático.
+    </p>
+  </div>
+
+  {% if not has_active_membership %}
+    <div class="alert alert-warning" style="margin-bottom: 2rem;">
+      <div>
+        <i class="fa-solid fa-triangle-exclamation"></i> <strong>Atención:</strong> 
+        Tu membresía no está activa o se encuentra vencida. Para reservar clases grupales debes tener un plan vigente.
+      </div>
+      <a href="{% url 'renew' %}" class="btn btn-yellow btn-sm" style="margin-left: 1rem;">Renovar Membresía</a>
+    </div>
+  {% endif %}
+
+  <!-- Filtro por disciplina -->
+  <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+    <span style="font-weight: 700; font-size: 0.85rem; color: #AAA; text-transform: uppercase; margin-right: 0.5rem;">Disciplina:</span>
+    <a href="{% url 'booking-calendar' %}" class="btn {% if not selected_class_type %}btn-yellow{% else %}btn-dark{% endif %} btn-sm">Todas</a>
+    {% for ct in class_types %}
+      <a href="{% url 'booking-calendar' %}?type={{ ct.slug }}" class="btn {% if selected_class_type == ct.slug %}btn-yellow{% else %}btn-dark{% endif %} btn-sm">
+        {{ ct.name }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <!-- Sesiones por día -->
+  {% if days_data %}
+    {% for date_key, day_info in days_data.items %}
+      <div style="margin-bottom: 3rem;">
+        <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--brand-yellow); text-transform: uppercase; margin-bottom: 1.25rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--brand-border);">
+          <i class="fa-regular fa-calendar-check"></i> {{ day_info.date|date:"l d \d\e F"|capfirst }}
+        </h3>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+          {% for session in day_info.sessions %}
+            <div class="class-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div class="class-header">
+                  <span style="font-weight: 800; font-size: 1.2rem; color: #FFF;">
+                    {{ session.class_type.name }}
+                  </span>
+                  <span class="badge badge-{{ session.class_type.intensity|lower }}">
+                    {{ session.class_type.get_intensity_display }}
+                  </span>
+                </div>
+
+                <div style="font-size: 1.4rem; font-weight: 900; color: var(--brand-yellow); margin-bottom: 0.5rem;">
+                  <i class="fa-regular fa-clock"></i> {{ session.start_datetime|time:"H:i" }} - {{ session.end_datetime|time:"H:i" }} hrs
+                </div>
+
+                <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin-bottom: 0.75rem;">
+                  <i class="fa-solid fa-user-tie"></i> <strong>{{ session.instructor_name }}</strong> · <i class="fa-solid fa-map-pin"></i> {{ session.room }}
+                </p>
+
+                <!-- Indicador de Cupos -->
+                <div style="background: var(--brand-dark); padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border); margin-bottom: 1rem; font-size: 0.85rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Disponibilidad:</span>
+                    <strong>
+                      {% if session.is_full %}
+                        <span style="color: var(--brand-danger);">Agotados (0/{{ session.capacity }})</span>
+                      {% else %}
+                        <span style="color: var(--brand-success);">{{ session.available_spots }} cupos libres</span>
+                      {% endif %}
+                    </strong>
+                  </div>
+                  {% if session.waitlist_count > 0 %}
+                    <div style="font-size: 0.75rem; color: #AAA; margin-top: 3px;">
+                      Lista de espera activa: {{ session.waitlist_count }} personas
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Acciones de reserva -->
+              <div style="border-top: 1px solid var(--brand-border); padding-top: 1rem;">
+                {% if session.user_has_booking %}
+                  <div style="text-align: center; padding: 0.5rem; background: rgba(40, 167, 69, 0.15); border: 1px solid var(--brand-success); border-radius: var(--radius-sm); color: #6ee7b7; font-weight: 700; font-size: 0.85rem;">
+                    <i class="fa-solid fa-circle-check"></i> Ya tienes una reserva en esta clase
+                  </div>
+                {% else %}
+                  <form method="post" action="{% url 'book-session-action' session.id %}">
+                    {% csrf_token %}
+                    {% if not session.is_full %}
+                      <button type="submit" class="btn btn-yellow btn-block btn-sm" {% if not has_active_membership %}disabled style="opacity: 0.5;"{% endif %}>
+                        <i class="fa-solid fa-ticket"></i> Reservar Cupo Confirmado
+                      </button>
+                    {% else %}
+                      <button type="submit" class="btn btn-outline-yellow btn-block btn-sm" {% if not has_active_membership %}disabled style="opacity: 0.5;"{% endif %}>
+                        <i class="fa-solid fa-user-clock"></i> Unirme a Lista de Espera
+                      </button>
+                    {% endif %}
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div style="text-align: center; padding: 4rem 1rem; background: var(--brand-surface); border-radius: var(--radius-md);">
+      <i class="fa-solid fa-calendar-xmark" style="font-size: 3rem; color: var(--brand-yellow); margin-bottom: 1rem;"></i>
+      <h3 style="font-size: 1.4rem; font-weight: 800;">No hay clases programadas disponibles</h3>
+      <p style="color: var(--brand-text-muted);">Vuelve a revisar en unos momentos o consulta con recepción.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

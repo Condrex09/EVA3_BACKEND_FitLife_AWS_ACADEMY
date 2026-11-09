@@ -1,0 +1,23 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="fitlife-admin-model-header" style="background: #181818; border-left: 4px solid #FFC400; padding: 12px 18px; margin-bottom: 16px; border-radius: 4px;">
+  <span style="color: #FFC400; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Edición FitLife · {{ opts.verbose_name|capfirst }}</span>
+  <p style="margin: 4px 0 0 0; color: #BBB; font-size: 13px;">
+    {% if opts.model_name == 'user' %}
+      Edita credenciales, permisos y roles. Los cambios en el rol actualizan el nivel de acceso en la plataforma.
+    {% elif opts.model_name == 'memberprofile' %}
+      Ficha del socio: revisa la vista previa del Pase QR generado automáticamente para validación de acceso.
+    {% elif opts.model_name == 'membership' %}
+      Edita vigencias o estado de la suscripción. Recuerda que un socio solo puede tener una membresía vigente a la vez.
+    {% elif opts.model_name == 'classsession' %}
+      Gestiona horarios, profesor y aforo. Las reservas confirmadas y lista de espera se listan abajo en el inline.
+    {% else %}
+      Formulario de edición de datos con validaciones automáticas de integridad referencial.
+    {% endif %}
+  </p>
+</div>
+{{ block.super }}
+{% endblock %}
+

@@ -1,0 +1,31 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+ENV/
+
+# Archivos de entorno y credenciales
+.env
+*.env.local
+
+# Python cache y bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Base de datos local de test temporal (si aplica)
+*.sqlite3
+*.db
+
+# Estáticos recolectados y subidas de usuarios
+staticfiles/
+media/
+!media/.gitkeep
+
+# Logs y OS
+*.log
+.DS_Store
+Thumbs.db
+

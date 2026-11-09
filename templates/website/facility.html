@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Nuestra Sede - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.25rem;">
+  <div class="section-header">
+    <span class="section-tag">Ubicación e Infraestructura</span>
+    <h1 class="section-title">{{ facility.facility_name }}</h1>
+    <p style="color: var(--brand-text-muted); max-width: 600px; margin: 0 auto;">
+      Instalaciones deportivas pensadas para tu comodidad, alto rendimiento y seguridad sanitaria.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr; gap: 2.5rem; margin-bottom: 3.5rem;">
+    <!-- Ficha técnica de la sede -->
+    <div style="background: var(--brand-surface); border: 2px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2.5rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div style="background: var(--brand-dark); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border);">
+          <div style="font-size: 0.8rem; color: #AAA; text-transform: uppercase;">Dirección</div>
+          <div style="font-size: 1.1rem; font-weight: 700; color: #FFF; margin-top: 4px;">
+            <i class="fa-solid fa-location-dot" style="color: var(--brand-yellow);"></i> Av. Apoquindo 4500, Las Condes
+          </div>
+          <small style="color: #888;">Santiago, Región Metropolitana (Metro Escuela Militar)</small>
+        </div>
+
+        <div style="background: var(--brand-dark); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border);">
+          <div style="font-size: 0.8rem; color: #AAA; text-transform: uppercase;">Aforo Permitido</div>
+          <div style="font-size: 1.3rem; font-weight: 900; color: var(--brand-yellow); margin-top: 4px;">
+            <i class="fa-solid fa-users"></i> {{ facility.max_capacity }} personas
+          </div>
+          <small style="color: #888;">Monitoreado en tiempo real por torniquetes QR</small>
+        </div>
+
+        <div style="background: var(--brand-dark); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border);">
+          <div style="font-size: 0.8rem; color: #AAA; text-transform: uppercase;">Horarios de Atención</div>
+          <div style="font-size: 0.95rem; font-weight: 700; color: #FFF; margin-top: 4px;">
+            Lun a Vie: 06:00 - 23:00 hrs<br>
+            Sábados: 08:00 - 18:00 hrs<br>
+            Domingos y Festivos: 09:00 - 14:00 hrs
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-size: 1.3rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">Servicios Incluidos en la Sede</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; color: var(--brand-text-muted); font-size: 0.95rem;">
+        <div><i class="fa-solid fa-circle-check" style="color: var(--brand-yellow);"></i> Sala de Pesos Libres y Racks</div>
+        <div><i class="fa-solid fa-circle-check" style="color: var(--brand-yellow);"></i> Área de Cardio con Conectividad</div>
+        <div><i class="fa-solid fa-circle-check" style="color: var(--brand-yellow);"></i> Sala Acústica de Spinning</div>
+        <div><i class="fa-solid fa-circle-check" style="color: var(--brand-yellow);"></i> Sala Multiuso (Yoga, Zumba, HIIT)</div>
+        <div><i class="fa-solid fa-circle-check" style="color: var(--brand-yellow);"></i> Camarines con Duchas de Agua Caliente</div>
+        <div><i class="fa-solid fa-circle-check" style="color: var(--brand-yellow);"></i> Lockers de Seguridad Individuales</div>
+        <div><i class="fa-solid fa-circle-check" style="color: var(--brand-yellow);"></i> Climatización Central y Purificación de Aire</div>
+        <div><i class="fa-solid fa-circle-check" style="color: var(--brand-yellow);"></i> Dispensadores de Agua Purificada</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

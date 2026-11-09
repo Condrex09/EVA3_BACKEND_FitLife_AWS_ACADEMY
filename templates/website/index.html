@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}FitLife - Centro Deportivo | Inicio{% endblock %}
+
+{% block content %}
+<!-- 1. Hero Section -->
+<section class="hero-section">
+  <div class="container hero-grid">
+    <div>
+      <span class="hero-tag"><i class="fa-solid fa-bolt"></i> Entrenamiento de Alto Rendimiento</span>
+      <h1 class="hero-title">
+        TU MEJOR VERSIÓN COMIENZA EN <span>FITLIFE</span>
+      </h1>
+      <p class="hero-desc">
+        Tecnología de acceso por código QR, control de aforo en tiempo real y reserva de clases grupales sin sobrecupo. Vive la experiencia del gimnasio inteligente.
+      </p>
+      <div class="hero-buttons">
+        <a href="{% url 'register' %}" class="btn btn-yellow">
+          <i class="fa-solid fa-fire"></i> ¡Inscríbete ya!
+        </a>
+        <a href="{% url 'plans' %}" class="btn btn-outline-yellow">
+          <i class="fa-solid fa-list-check"></i> Conoce los Planes
+        </a>
+      </div>
+    </div>
+
+    <!-- Tarjeta de Sede en el Hero -->
+    <div class="facility-card-hero">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <span style="color: var(--brand-yellow); font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">
+          <i class="fa-solid fa-location-dot"></i> Sede Principal
+        </span>
+        <span class="badge badge-low"><i class="fa-solid fa-door-open"></i> Abierto Ahora</span>
+      </div>
+      <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">{{ facility.facility_name }}</h3>
+      <p style="color: var(--brand-text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">
+        Av. Apoquindo 4500, Las Condes · Metro Escuela Militar
+      </p>
+      
+      <div style="background: var(--brand-dark); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border); margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
+          <span style="color: #AAA;">Aforo Máximo Sede:</span>
+          <strong>{{ facility.max_capacity }} deportistas</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span style="color: #AAA;">Acceso Inteligente:</span>
+          <span style="color: var(--brand-yellow); font-weight: 700;"><i class="fa-solid fa-qrcode"></i> Pase QR Dinámico</span>
+        </div>
+      </div>
+
+      <a href="{% url 'facility' %}" class="btn btn-dark btn-block btn-sm">
+        <i class="fa-solid fa-circle-info"></i> Ver Instalaciones y Horarios
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Vive la Experiencia FitLife -->
+<section style="padding: 5rem 0; background-color: #161616; border-bottom: 1px solid var(--brand-border);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Infraestructura Premium</span>
+      <h2 class="section-title">Vive la Experiencia FitLife</h2>
+      <p style="color: var(--brand-text-muted); max-width: 600px; margin: 0 auto;">
+        Espacios amplios diseñados para optimizar cada minuto de tu rutina con equipamiento biomecánico de primer nivel.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+      <div class="class-card">
+        <div style="font-size: 2.5rem; color: var(--brand-yellow); margin-bottom: 1rem;">
+          <i class="fa-solid fa-dumbbell"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem;">Zona de Pesas Libres</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.9rem;">
+          Mancuernas de 2kg a 50kg, barras olímpicas de competición y racks reforzados para sentadillas y peso muerto sin esperas.
+        </p>
+      </div>
+
+      <div class="class-card">
+        <div style="font-size: 2.5rem; color: var(--brand-yellow); margin-bottom: 1rem;">
+          <i class="fa-solid fa-person-running"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem;">Área de Cardio Inteligente</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.9rem;">
+          Trotadoras, elípticas y simuladores de escaleras con monitoreo de ritmo cardíaco y conectividad para tus entrenamientos.
+        </p>
+      </div>
+
+      <div class="class-card">
+        <div style="font-size: 2.5rem; color: var(--brand-yellow); margin-bottom: 1rem;">
+          <i class="fa-solid fa-users-rays"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem;">Salas Grupales Climatizadas</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.9rem;">
+          Salas acústicas preparadas para Spinning, HIIT, Yoga y Zumba con cupos automáticos y lista de espera digital.
+        </p>
+      </div>
+
+      <div class="class-card">
+        <div style="font-size: 2.5rem; color: var(--brand-yellow); margin-bottom: 1rem;">
+          <i class="fa-solid fa-shower"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem;">Camarines y Lockers</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.9rem;">
+          Duchas con agua caliente de alta presión, secadores de pelo y casilleros de seguridad para tu tranquilidad mientras entrenas.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Sección de Planes (Inspiración Smart Fit) -->
+<section style="padding: 5rem 0;" id="planes">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Membresías Flexibles</span>
+      <h2 class="section-title">Elige el Plan que Impulsa tus Metas</h2>
+      <p style="color: var(--brand-text-muted); max-width: 600px; margin: 0 auto;">
+        Tarifas en pesos chilenos sin letra chica. Cancela o renueva online en cualquier momento.
+      </p>
+    </div>
+
+    <div class="plans-grid">
+      {% for plan in plans %}
+        <div class="plan-card {% if plan.is_featured %}featured{% endif %}">
+          {% if plan.is_featured %}
+            <div class="plan-badge-featured">El más ventajoso</div>
+          {% endif %}
+
+          <h3 class="plan-name">{{ plan.name }}</h3>
+          <p style="color: var(--brand-text-muted); font-size: 0.9rem; min-height: 48px;">
+            {{ plan.description }}
+          </p>
+
+          <div class="plan-price-box">
+            <span class="plan-price-label">Desde</span>
+            <div class="plan-price">
+              ${{ plan.monthly_price|floatformat:0 }} <small>CLP/mes</small>
+            </div>
+            <div class="plan-enrollment">
+              {% if plan.enrollment_price > 0 %}
+                Matrícula: ${{ plan.enrollment_price|floatformat:0 }} CLP
+              {% else %}
+                <span style="color: var(--brand-success); font-weight: 700;">¡Matrícula Gratis!</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <ul class="plan-benefits">
+            {% for benefit in plan.benefits %}
+              <li><i class="fa-solid fa-check"></i> {{ benefit }}</li>
+            {% empty %}
+              <li><i class="fa-solid fa-check"></i> Acceso ilimitado a sala de máquinas</li>
+              <li><i class="fa-solid fa-check"></i> Pase QR de acceso ágil</li>
+            {% endfor %}
+          </ul>
+
+          <a href="{% url 'checkout' plan.slug %}" class="btn {% if plan.is_featured %}btn-yellow{% else %}btn-dark{% endif %} btn-block">
+            Inscribirme al {{ plan.name }}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 4. Grilla de Clases Grupales -->
+<section style="padding: 5rem 0; background-color: #161616; border-top: 1px solid var(--brand-border); border-bottom: 1px solid var(--brand-border);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Entrenamiento Guiado</span>
+      <h2 class="section-title">Clases Grupales de Alta Demanda</h2>
+      <p style="color: var(--brand-text-muted); max-width: 600px; margin: 0 auto;">
+        Reserva tu cupo garantizado desde tu teléfono con confirmación inmediata y lista de espera automática.
+      </p>
+    </div>
+
+    <div class="classes-grid">
+      {% for ct in class_types %}
+        <div class="class-card">
+          <div class="class-header">
+            <span style="font-size: 1.8rem; color: var(--brand-yellow);">
+              <i class="fa-solid {{ ct.icon_or_image }}"></i>
+            </span>
+            <span class="badge badge-{{ ct.intensity|lower }}">
+              {{ ct.get_intensity_display }}
+            </span>
+          </div>
+          <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;">{{ ct.name }}</h3>
+          <p style="color: var(--brand-text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+            {{ ct.description }}
+          </p>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--brand-border); padding-top: 0.85rem; font-size: 0.85rem; color: #AAA;">
+            <span><i class="fa-regular fa-clock"></i> {{ ct.duration_minutes }} minutos</span>
+            <a href="{% url 'classes-schedule' %}?type={{ ct.slug }}" style="font-weight: 700;">Ver Horarios &rarr;</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 3rem;">
+      <a href="{% url 'classes-schedule' %}" class="btn btn-outline-yellow">
+        <i class="fa-solid fa-calendar-days"></i> Ver Horario Semanal Completo
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Pase QR y Aplicación -->
+<section style="padding: 5rem 0;">
+  <div class="container" style="display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center;">
+    <div style="background: var(--brand-surface); border: 2px solid var(--brand-border); border-radius: var(--radius-lg); padding: 3rem 2rem; text-align: center;">
+      <div style="width: 80px; height: 80px; background: rgba(255, 196, 0, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--brand-yellow); font-size: 2.2rem;">
+        <i class="fa-solid fa-qrcode"></i>
+      </div>
+      <h2 style="font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 1rem;">
+        Ingreso Express con tu Pase QR
+      </h2>
+      <p style="color: var(--brand-text-muted); max-width: 650px; margin: 0 auto 2rem; font-size: 1rem;">
+        Olvídate de tarjetas plásticas y esperas en el torniquete. Al inscribirte obtienes tu código QR personal e intransferible en tu portal para ingresar en menos de un segundo.
+      </p>
+      {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="btn btn-yellow">
+          <i class="fa-solid fa-qrcode"></i> Ver Mi Pase QR
+        </a>
+      {% else %}
+        <a href="{% url 'register' %}" class="btn btn-yellow">
+          <i class="fa-solid fa-user-plus"></i> Crear Mi Cuenta y Obtener Pase
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- 6. Preguntas Frecuentes (FAQ) -->
+<section style="padding: 4rem 0 5rem; background: #161616; border-top: 1px solid var(--brand-border);">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Resolvemos tus dudas</span>
+      <h2 class="section-title">Preguntas Frecuentes</h2>
+    </div>
+
+    <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem;">
+      <details style="background: var(--brand-surface); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border);">
+        <summary style="font-weight: 700; color: #FFF; cursor: pointer;">¿Cómo funciona la lista de espera en las clases grupales?</summary>
+        <p style="color: var(--brand-text-muted); margin-top: 0.75rem; font-size: 0.9rem;">
+          Si una clase de Spinning, Yoga o HIIT tiene sus cupos llenos, puedes unirte a la lista de espera con una posición asignada. Si un socio cancela con al menos 2 horas de anticipación, el primer socio de la lista es promovido automáticamente a cupo confirmado y recibe una notificación en su panel.
+        </p>
+      </details>
+
+      <details style="background: var(--brand-surface); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border);">
+        <summary style="font-weight: 700; color: #FFF; cursor: pointer;">¿Puedo congelar mi membresía en caso de viaje o salud?</summary>
+        <p style="color: var(--brand-text-muted); margin-top: 0.75rem; font-size: 0.9rem;">
+          Sí. El personal de recepción o administración puede congelar temporalmente tu membresía. Los días congelados no se pierden: al descongelarse, tu fecha de vencimiento se extiende automáticamente por la misma cantidad de días.
+        </p>
+      </details>
+
+      <details style="background: var(--brand-surface); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--brand-border);">
+        <summary style="font-weight: 700; color: #FFF; cursor: pointer;">¿Qué medios de pago están disponibles?</summary>
+        <p style="color: var(--brand-text-muted); margin-top: 0.75rem; font-size: 0.9rem;">
+          Aceptamos pago digital con tarjeta de crédito o débito mediante nuestra pasarela en línea, además de pago en efectivo y transferencia bancaria directamente en la recepción de la sede.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

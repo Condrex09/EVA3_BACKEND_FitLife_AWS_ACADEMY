@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Contacto y Ayuda - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.25rem;">
+  <div class="section-header">
+    <span class="section-tag">Estamos para Ayudarte</span>
+    <h1 class="section-title">Contáctanos</h1>
+    <p style="color: var(--brand-text-muted); max-width: 600px; margin: 0 auto;">
+      ¿Tienes consultas sobre planes, convenios para empresas o funcionamiento de la sede? Envíanos tu mensaje.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr; gap: 3rem; max-width: 900px; margin: 0 auto;">
+    <div class="form-card">
+      <form method="post" action="{% url 'contact' %}">
+        {% csrf_token %}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.name.id_for_label }}">Nombre Completo</label>
+            {{ form.name }}
+            {{ form.name.errors }}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="{{ form.email.id_for_label }}">Correo Electrónico</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.subject.id_for_label }}">Asunto</label>
+          {{ form.subject }}
+          {{ form.subject.errors }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.message.id_for_label }}">Mensaje o Consulta</label>
+          {{ form.message }}
+          {{ form.message.errors }}
+        </div>
+
+        <button type="submit" class="btn btn-yellow btn-block">
+          <i class="fa-solid fa-paper-plane"></i> Enviar Mensaje
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

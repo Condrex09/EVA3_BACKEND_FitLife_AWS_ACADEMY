@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Ficha de Socio: {{ member_user.get_full_name }} - Recepción FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 1.25rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--brand-border); flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <span style="color: var(--brand-yellow); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">Ficha Operativa de Socio</span>
+      <h1 style="font-size: 2rem; font-weight: 900; text-transform: uppercase; margin: 0.25rem 0;">
+        {{ member_user.get_full_name|default:member_user.username }}
+      </h1>
+      <p style="color: var(--brand-text-muted); font-size: 0.9rem; margin: 0;">
+        RUT: <strong>{{ profile.formatted_rut }}</strong> · Correo: <strong>{{ member_user.email }}</strong> · Tel: <strong>{{ profile.phone|default:"No informado" }}</strong>
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="{% url 'reception-members' %}" class="btn btn-dark btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Volver a Búsqueda
+      </a>
+      <a href="{% url 'reception-access' %}" class="btn btn-yellow btn-sm">
+        <i class="fa-solid fa-qrcode"></i> Control de Acceso
+      </a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 2rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+      
+      <!-- Pase QR -->
+      <div style="background: var(--brand-surface); border: 2px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem; text-align: center;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+          Pase QR de Acceso
+        </h3>
+        <div style="background: #FFFFFF; display: inline-block; padding: 10px; border-radius: var(--radius-md); margin-bottom: 1rem;">
+          <img src="{{ profile.generate_qr_base64 }}" alt="QR Socio" width="160" height="160">
+        </div>
+        <div style="font-size: 0.75rem; color: #888; font-family: monospace; word-break: break-all;">
+          Token: {{ profile.qr_token }}
+        </div>
+      </div>
+
+      <!-- Membresías y Acciones Operativas -->
+      <div style="background: var(--brand-surface); border: 2px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+          Historial y Gestión de Membresías
+        </h3>
+        {% if memberships %}
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for mem in memberships %}
+              <div style="background: var(--brand-dark); border: 1px solid var(--brand-border); padding: 1.25rem; border-radius: var(--radius-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <strong>{{ mem.plan.name }}</strong>
+                  {% if mem.status == 'ACTIVE' %}
+                    <span class="badge badge-low">ACTIVA</span>
+                  {% elif mem.status == 'FROZEN' %}
+                    <span class="badge badge-medium">CONGELADA</span>
+                  {% else %}
+                    <span class="badge badge-high">VENCIDA</span>
+                  {% endif %}
+                </div>
+                <div style="font-size: 0.85rem; color: #AAA; margin-bottom: 0.75rem;">
+                  Vigencia: {{ mem.start_date|date:"d/m/Y" }} al {{ mem.end_date|date:"d/m/Y" }}
+                  {% if mem.status == 'FROZEN' and mem.frozen_until %}
+                    <br><span style="color: var(--brand-yellow);"><i class="fa-solid fa-snowflake"></i> Congelada hasta el {{ mem.frozen_until|date:"d/m/Y" }}</span>
+                  {% endif %}
+                </div>
+
+                <!-- Acciones según estado -->
+                {% if mem.status == 'ACTIVE' %}
+                  <form method="post" action="{% url 'reception-freeze' mem.id %}" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; background: #1a1a1a; padding: 0.75rem; border-radius: 4px;">
+                    {% csrf_token %}
+                    <label style="font-size: 0.75rem; color: #BBB; width: 100%;">Congelar membresía:</label>
+                    <input type="date" name="frozen_until" required class="form-control" style="font-size: 0.8rem; padding: 4px 8px; width: auto; background: #262626; color: #fff; border: 1px solid #444;">
+                    <button type="submit" class="btn btn-outline-yellow btn-sm" style="font-size: 0.75rem;">
+                      <i class="fa-solid fa-snowflake"></i> Congelar
+                    </button>
+                  </form>
+                {% elif mem.status == 'FROZEN' %}
+                  <form method="post" action="{% url 'reception-unfreeze' mem.id %}" style="margin-top: 0.5rem;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-yellow btn-sm" style="font-size: 0.75rem; width: 100%;">
+                      <i class="fa-solid fa-fire"></i> Descongelar Ahora (Reactiva y extiende vigencia)
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="color: #888;">El socio no registra membresías registradas.</p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Registro de Pago Manual (Efectivo / Transferencia) -->
+  <div style="background: var(--brand-surface); border: 2px solid var(--brand-yellow); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem;">
+    <h3 style="font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--brand-yellow);">
+      <i class="fa-solid fa-cash-register"></i> Registrar Pago Manual en Recepción
+    </h3>
+    <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+      Registra pagos en efectivo o transferencia bancaria realizados presencialmente. Activa o renueva de inmediato la membresía del socio.
+    </p>
+
+    <form method="post" action="{% url 'reception-manual-payment' member_user.id %}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+      {% csrf_token %}
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" style="font-size: 0.8rem;">Plan a Inscribir / Renovar</label>
+        <select name="plan_id" required class="form-control" style="font-size: 0.85rem;" id="manualPaymentPlanSelect">
+          {% for p in active_plans %}
+            <option value="{{ p.id }}" data-price="{{ p.monthly_price }}">{{ p.name }} (${{ p.monthly_price|floatformat:"0" }} CLP)</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" style="font-size: 0.8rem;">Monto a Cobrar (CLP)</label>
+        <input type="number" name="amount" id="manualPaymentAmount" required class="form-control" style="font-size: 0.85rem;" value="{{ active_plans.0.monthly_price|default:25000 }}">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" style="font-size: 0.8rem;">Concepto</label>
+        <select name="concept" class="form-control" style="font-size: 0.85rem;">
+          <option value="MONTHLY">Mensualidad</option>
+          <option value="ENROLLMENT">Inscripción / Matrícula</option>
+          <option value="RENEWAL">Renovación de Membresía</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label" style="font-size: 0.8rem;">Método de Pago</label>
+        <select name="method" class="form-control" style="font-size: 0.85rem;">
+          <option value="CASH">Efectivo presencial</option>
+          <option value="TRANSFER">Transferencia bancaria</option>
+        </select>
+      </div>
+
+      <div>
+        <button type="submit" class="btn btn-yellow btn-block" style="padding: 0.65rem 1rem;">
+          <i class="fa-solid fa-check"></i> Registrar y Activar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Últimos accesos de este socio -->
+  <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem;">
+    <h3 style="font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+      Últimos Accesos de este Socio
+    </h3>
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th>Fecha y Hora</th>
+            <th>Dirección</th>
+            <th>Resultado</th>
+            <th>Motivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in recent_logs %}
+            <tr>
+              <td>{{ log.timestamp|date:"d/m/Y H:i:s" }}</td>
+              <td>{{ log.get_direction_display }}</td>
+              <td>
+                {% if log.result == 'ALLOWED' %}
+                  <span class="badge badge-low">PERMITIDO</span>
+                {% else %}
+                  <span class="badge badge-high">DENEGADO</span>
+                {% endif %}
+              </td>
+              <td>{{ log.get_deny_reason_display|default:"-" }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="text-center" style="color: #888; padding: 1rem;">No hay registros de acceso para este socio.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const planSelect = document.getElementById('manualPaymentPlanSelect');
+    const amountInput = document.getElementById('manualPaymentAmount');
+    if (planSelect && amountInput) {
+      planSelect.addEventListener('change', () => {
+        const selectedOpt = planSelect.options[planSelect.selectedIndex];
+        const price = selectedOpt.getAttribute('data-price');
+        if (price) {
+          amountInput.value = price;
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

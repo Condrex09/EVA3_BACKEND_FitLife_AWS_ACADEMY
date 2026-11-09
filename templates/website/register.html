@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Registro de Socio - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.25rem;">
+  <div style="max-width: 600px; margin: 0 auto;">
+    <div class="section-header" style="margin-bottom: 2rem;">
+      <span class="section-tag">Únete a la Comunidad</span>
+      <h1 class="section-title">Crea tu Cuenta FitLife</h1>
+      <p style="color: var(--brand-text-muted);">
+        Regístrate para obtener tu Pase QR y acceder a reservas de clases grupales.
+      </p>
+    </div>
+
+    <div class="form-card">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.first_name.id_for_label }}">Nombre</label>
+            {{ form.first_name }}
+            {{ form.first_name.errors }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="{{ form.last_name.id_for_label }}">Apellidos</label>
+            {{ form.last_name }}
+            {{ form.last_name.errors }}
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.rut.id_for_label }}">RUT Chileno</label>
+            {{ form.rut }}
+            <small style="color: #888;">Ej: 12.345.678-5</small>
+            {{ form.rut.errors }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="{{ form.phone.id_for_label }}">Teléfono</label>
+            {{ form.phone }}
+            {{ form.phone.errors }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.email.id_for_label }}">Correo Electrónico</label>
+          {{ form.email }}
+          {{ form.email.errors }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="{{ form.username.id_for_label }}">Nombre de Usuario</label>
+          {{ form.username }}
+          {{ form.username.errors }}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="{{ form.password.id_for_label }}">Contraseña</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="{{ form.password_confirm.id_for_label }}">Confirmar</label>
+            {{ form.password_confirm }}
+            {{ form.password_confirm.errors }}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-yellow btn-block" style="margin-top: 1rem;">
+          <i class="fa-solid fa-user-plus"></i> Completar Registro y Activar Pase
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--brand-text-muted);">
+        ¿Ya tienes una cuenta registrada? 
+        <a href="{% url 'login' %}" style="font-weight: 700;">Inicia sesión aquí</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

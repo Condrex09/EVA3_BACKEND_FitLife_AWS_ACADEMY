@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Espacio - FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 1.25rem;">
+  <!-- Cabecera de bienvenida -->
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--brand-border);">
+    <div>
+      <span style="color: var(--brand-yellow); font-weight: 700; text-transform: uppercase; font-size: 0.85rem;">Portal del Socio</span>
+      <h1 style="font-size: 2.2rem; font-weight: 900; text-transform: uppercase;">
+        Hola, {{ user.first_name|default:user.username }}
+      </h1>
+      <p style="color: var(--brand-text-muted); font-size: 0.95rem;">
+        RUT: <strong>{{ profile.formatted_rut }}</strong> · Correo: <strong>{{ user.email }}</strong>
+      </p>
+    </div>
+
+    <div>
+      <a href="{% url 'booking-calendar' %}" class="btn btn-yellow">
+        <i class="fa-solid fa-calendar-check"></i> Reservar Clase Grupal
+      </a>
+    </div>
+  </div>
+
+  <!-- Notificaciones Activas -->
+  {% if notifications %}
+    <div style="margin-bottom: 2.5rem;">
+      <h3 style="font-size: 1.1rem; font-weight: 800; text-transform: uppercase; color: var(--brand-yellow); margin-bottom: 1rem;">
+        <i class="fa-solid fa-bell"></i> Avisos y Notificaciones
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {% for notif in notifications %}
+          <div style="background: var(--brand-surface); border: 1px solid {% if not notif.is_read %}var(--brand-yellow){% else %}var(--brand-border){% endif %}; border-radius: var(--radius-sm); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 700; color: #FFF; font-size: 0.95rem;">
+                {% if not notif.is_read %}<span class="badge badge-medium" style="margin-right: 6px;">NUEVA</span>{% endif %}
+                {{ notif.title }}
+              </div>
+              <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin-top: 2px;">
+                {{ notif.message }}
+              </p>
+              <small style="color: #777;">{{ notif.created_at|date:"d/m/Y H:i" }}</small>
+            </div>
+            {% if not notif.is_read %}
+              <a href="{% url 'mark-notification-read' notif.id %}" class="btn btn-dark btn-sm" title="Marcar como leída">
+                <i class="fa-solid fa-check"></i>
+              </a>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Grid principal: Membresía y Pase QR -->
+  <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+      
+      <!-- Tarjeta 1: Mi Membresía -->
+      <div style="background: var(--brand-surface); border: 2px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: #AAA; text-transform: uppercase;">Estado de Membresía</span>
+          {% if membership %}
+            {% if membership.status == 'ACTIVE' %}
+              <span class="badge badge-active"><i class="fa-solid fa-circle-check"></i> ACTIVA</span>
+            {% elif membership.status == 'FROZEN' %}
+              <span class="badge badge-frozen"><i class="fa-solid fa-snowflake"></i> CONGELADA</span>
+            {% else %}
+              <span class="badge badge-expired"><i class="fa-solid fa-circle-xmark"></i> VENCIDA</span>
+            {% endif %}
+          {% else %}
+            <span class="badge badge-expired">SIN PLAN</span>
+          {% endif %}
+        </div>
+
+        {% if membership %}
+          <h2 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 0.5rem; color: #FFF;">
+            {{ membership.plan.name }}
+          </h2>
+          <p style="color: var(--brand-text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Vigencia: <strong>{{ membership.start_date|date:"d/m/Y" }}</strong> hasta el <strong>{{ membership.end_date|date:"d/m/Y" }}</strong>
+          </p>
+
+          <div style="background: var(--brand-dark); border-radius: var(--radius-sm); padding: 1.25rem; border: 1px solid var(--brand-border); margin-bottom: 1.5rem;">
+            {% if membership.status == 'ACTIVE' %}
+              <div style="font-size: 0.85rem; color: #AAA;">Días restantes de entrenamiento:</div>
+              <div style="font-size: 2.2rem; font-weight: 900; color: var(--brand-yellow);">
+                {{ membership.days_remaining }} días
+              </div>
+            {% elif membership.status == 'FROZEN' %}
+              <div style="color: var(--brand-info); font-weight: 700;">
+                Membresía pausada hasta el {{ membership.frozen_until|date:"d/m/Y" }}.
+              </div>
+              <small style="color: #AAA;">Al descongelarse, se repondrán los días congelados automáticamente.</small>
+            {% else %}
+              <div style="color: var(--brand-danger); font-weight: 700;">
+                Tu membresía finalizó el {{ membership.end_date|date:"d/m/Y" }}.
+              </div>
+              <small style="color: #AAA;">Renueva tu plan para rehabilitar tu pase QR y clases grupales.</small>
+            {% endif %}
+          </div>
+
+          <a href="{% url 'renew' %}" class="btn btn-yellow btn-block">
+            <i class="fa-solid fa-arrows-rotate"></i> Renovar Membresía
+          </a>
+        {% else %}
+          <p style="color: var(--brand-text-muted); margin-bottom: 2rem;">
+            Aún no has contratado un plan en FitLife. Elige uno para activar tu pase de acceso y clases.
+          </p>
+          <a href="{% url 'plans' %}" class="btn btn-yellow btn-block">
+            <i class="fa-solid fa-cart-plus"></i> Ver Planes Disponibles
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Tarjeta 2: Mi Pase QR Digital -->
+      <div style="background: var(--brand-surface); border: 2px solid var(--brand-border); border-radius: var(--radius-lg); padding: 2rem; text-align: center;">
+        <span style="font-size: 0.85rem; font-weight: 700; color: #AAA; text-transform: uppercase; display: block; margin-bottom: 1rem;">
+          <i class="fa-solid fa-id-badge" style="color: var(--brand-yellow);"></i> Mi Pase de Acceso QR
+        </span>
+
+        {% if qr_base64 %}
+          <div style="background: #FFFFFF; display: inline-block; padding: 12px; border-radius: var(--radius-md); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); margin-bottom: 1rem;">
+            <img src="{{ qr_base64 }}" alt="Pase QR de {{ user.first_name }}" width="190" height="190" style="display: block;">
+          </div>
+          <div style="font-size: 0.75rem; color: #777; font-family: monospace; word-break: break-all; margin-bottom: 1rem;">
+            Token ID: {{ profile.qr_token }}
+          </div>
+          <p style="color: var(--brand-text-muted); font-size: 0.85rem;">
+            Acerca este código al lector o cámara en el torniquete de recepción para registrar tu ingreso o salida.
+          </p>
+        {% else %}
+          <p style="color: #999;">Generando pase QR...</p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Mis Reservas de Clases -->
+  <div style="margin-bottom: 3.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.4rem; font-weight: 800; text-transform: uppercase;">
+        <i class="fa-solid fa-calendar-days" style="color: var(--brand-yellow);"></i> Mis Próximas Clases
+      </h2>
+      <a href="{% url 'booking-calendar' %}" class="btn btn-outline-yellow btn-sm">
+        <i class="fa-solid fa-plus"></i> Nueva Reserva
+      </a>
+    </div>
+
+    {% if bookings %}
+      <div class="table-responsive" style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-md);">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Disciplina</th>
+              <th>Fecha y Hora</th>
+              <th>Instructor / Sala</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+              <tr>
+                <td><strong>{{ b.session.class_type.name }}</strong></td>
+                <td>{{ b.session.start_datetime|date:"d/m/Y H:i" }} hrs</td>
+                <td>{{ b.session.instructor_name }} · {{ b.session.room }}</td>
+                <td>
+                  {% if b.status == 'CONFIRMED' %}
+                    <span class="badge badge-low">CONFIRMADA</span>
+                  {% elif b.status == 'WAITLIST' %}
+                    <span class="badge badge-medium">LISTA DE ESPERA (#{{ b.waitlist_position }})</span>
+                  {% elif b.status == 'CANCELLED' %}
+                    <span class="badge badge-high">CANCELADA</span>
+                  {% else %}
+                    <span class="badge">{{ b.get_status_display }}</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if b.status == 'CONFIRMED' or b.status == 'WAITLIST' %}
+                    <form method="post" action="{% url 'cancel-booking-action' b.id %}" style="display: inline;" onsubmit="return confirm('¿Seguro que deseas cancelar esta reserva? (Permitido hasta 2 horas antes de la clase)');">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fa-solid fa-xmark"></i> Cancelar
+                      </button>
+                    </form>
+                  {% else %}
+                    <span style="color: #777;">-</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-md); padding: 2.5rem; text-align: center;">
+        <p style="color: var(--brand-text-muted); margin-bottom: 1rem;">No tienes reservas de clases activas en este momento.</p>
+        <a href="{% url 'booking-calendar' %}" class="btn btn-outline-yellow btn-sm">Explorar y Reservar Clases</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Historial de Pagos -->
+  <div>
+    <h2 style="font-size: 1.4rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1.25rem;">
+      <i class="fa-solid fa-receipt" style="color: var(--brand-yellow);"></i> Historial de Pagos
+    </h2>
+
+    {% if payments %}
+      <div class="table-responsive" style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-md);">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Código Referencia</th>
+              <th>Concepto</th>
+              <th>Monto (CLP)</th>
+              <th>Medio de Pago</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in payments %}
+              <tr>
+                <td><code>{{ p.reference }}</code></td>
+                <td>{{ p.get_concept_display }}</td>
+                <td><strong>${{ p.amount|floatformat:0 }} CLP</strong></td>
+                <td>{{ p.get_method_display }}</td>
+                <td>
+                  {% if p.status == 'APPROVED' %}
+                    <span class="badge badge-low">APROBADO</span>
+                  {% elif p.status == 'REJECTED' %}
+                    <span class="badge badge-high">RECHAZADO</span>
+                  {% else %}
+                    <span class="badge badge-medium">PENDIENTE</span>
+                  {% endif %}
+                </td>
+                <td>{{ p.paid_at|date:"d/m/Y H:i" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: var(--radius-md); padding: 2rem; text-align: center; color: var(--brand-text-muted);">
+        No registras transacciones de pago en el sistema.
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
