@@ -1,0 +1,39 @@
+{% load i18n static %}<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>Guardando cambios | FitLife</title>
+    <style>
+      body {
+        background: #111111;
+        color: #F5F5F5;
+        font-family: 'Montserrat', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .popup-box {
+        text-align: center;
+        padding: 20px;
+      }
+      .spinner {
+        color: #FFC400;
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="popup-box">
+      <div class="spinner">⚡</div>
+      <p style="margin: 0; font-size: 14px; font-weight: 700;">Actualizando información...</p>
+    </div>
+    <script id="django-admin-popup-response-constants"
+            src="{% static "admin/js/popup_response.js" %}"
+            data-popup-response="{{ popup_response_data }}">
+    </script>
+  </body>
+</html>
+

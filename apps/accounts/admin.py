@@ -28,6 +28,8 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ['role', 'is_active', 'is_staff', 'is_superuser']
     search_fields = ['username', 'first_name', 'last_name', 'email', 'profile__rut']
     ordering = ['-date_joined']
+    save_on_top = True
+    list_per_page = 25
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
@@ -56,9 +58,12 @@ class UserAdmin(BaseUserAdmin):
 class MemberProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'formatted_rut', 'phone', 'qr_token', 'active_membership_summary', 'created_at']
     search_fields = ['rut', 'user__username', 'user__first_name', 'user__last_name', 'user__email']
+    autocomplete_fields = ['user']
     readonly_fields = ['qr_token', 'qr_preview', 'formatted_rut_display', 'active_membership_link', 'created_at']
     fields = ['user', 'rut', 'formatted_rut_display', 'phone', 'birth_date', 'emergency_contact', 'qr_token', 'qr_preview', 'active_membership_link', 'created_at']
     ordering = ['-created_at']
+    save_on_top = True
+    list_per_page = 25
 
     def qr_preview(self, instance):
         if instance.pk:

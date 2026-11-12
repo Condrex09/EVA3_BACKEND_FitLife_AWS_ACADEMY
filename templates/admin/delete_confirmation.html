@@ -1,0 +1,77 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_filters %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="{% static 'admin/js/cancel.js' %}" async></script>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+  <li><a href="{% url 'admin:index' %}">Inicio</a></li>
+  <li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a></li>
+  <li><a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a></li>
+  <li><a href="{% url opts|admin_urlname:'change' object.pk|admin_urlquote %}">{{ object|to_object_display_value|truncatewords:"12" }}</a></li>
+  <li aria-current="page">Eliminar</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="fitlife-delete-card">
+  {% if perms_lacking %}
+    <h2>⛔ Permisos Insuficientes</h2>
+    <p>
+      Eliminar el registro <strong>{{ object_name }} &ldquo;{{ object }}&rdquo;</strong> requeriría borrar registros asociados, pero tu cuenta de usuario no tiene los permisos necesarios para eliminar los siguientes objetos:
+    </p>
+    <ul>
+      {{ perms_lacking|truncated_unordered_list:delete_confirmation_max_display }}
+    </ul>
+    <div style="margin-top: 18px;">
+      <a role="button" href="#" class="button cancel-link">Volver atrás</a>
+    </div>
+
+  {% elif protected %}
+    <h2 style="color: #FFC107 !important;">⚠️ Registro Protegido por Integridad Referencial</h2>
+    <p>
+      No es posible eliminar el registro <strong>{{ object_name }} &ldquo;{{ object }}&rdquo;</strong> porque existen registros protegidos vinculados en el sistema (por ejemplo, pagos o bitácoras históricas asociadas):
+    </p>
+    <ul style="border-color: rgba(255, 193, 7, 0.4); color: #FFF3CD;">
+      {{ protected|truncated_unordered_list:delete_confirmation_max_display }}
+    </ul>
+    <div style="margin-top: 18px;">
+      <a role="button" href="#" class="button cancel-link">Volver atrás</a>
+    </div>
+
+  {% else %}
+    <h2>⚠️ Advertencia: Esta Acción No Se Puede Deshacer</h2>
+    <p>
+      ¿Estás completamente seguro de que deseas eliminar permanentemente el registro <strong>{{ object_name }} &ldquo;{{ object }}&rdquo;</strong>?
+      Todos los registros relacionados listados a continuación también serán removidos de la base de datos de FitLife:
+    </p>
+
+    {% include "admin/includes/object_delete_summary.html" %}
+
+    {% if delete_confirmation_max_display is None or delete_confirmation_max_display > 0 %}
+      <h3 style="color: #FFC400; font-size: 14px; text-transform: uppercase; margin-top: 16px;">
+        Objetos que serán eliminados:
+      </h3>
+      <ul>
+        {{ deleted_objects|truncated_unordered_list:delete_confirmation_max_display }}
+      </ul>
+    {% endif %}
+
+    <form method="post">{% csrf_token %}
+      <div>
+        <input type="hidden" name="post" value="yes">
+        {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+        {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+        <input type="submit" value="Sí, eliminar definitivamente" class="button btn-danger">
+        <a role="button" href="#" class="button cancel-link">Cancelar y volver</a>
+      </div>
+    </form>
+  {% endif %}
+</div>
+{% endblock content %}
+

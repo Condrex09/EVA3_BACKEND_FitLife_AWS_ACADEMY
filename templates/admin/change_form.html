@@ -1,23 +1,41 @@
 {% extends "admin/change_form.html" %}
-{% load i18n %}
+{% load i18n admin_urls static admin_modify %}
 
 {% block content %}
-<div class="fitlife-admin-model-header" style="background: #181818; border-left: 4px solid #FFC400; padding: 12px 18px; margin-bottom: 16px; border-radius: 4px;">
-  <span style="color: #FFC400; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Edición FitLife · {{ opts.verbose_name|capfirst }}</span>
-  <p style="margin: 4px 0 0 0; color: #BBB; font-size: 13px;">
-    {% if opts.model_name == 'user' %}
-      Edita credenciales, permisos y roles. Los cambios en el rol actualizan el nivel de acceso en la plataforma.
-    {% elif opts.model_name == 'memberprofile' %}
-      Ficha del socio: revisa la vista previa del Pase QR generado automáticamente para validación de acceso.
-    {% elif opts.model_name == 'membership' %}
-      Edita vigencias o estado de la suscripción. Recuerda que un socio solo puede tener una membresía vigente a la vez.
-    {% elif opts.model_name == 'classsession' %}
-      Gestiona horarios, profesor y aforo. Las reservas confirmadas y lista de espera se listan abajo en el inline.
-    {% else %}
-      Formulario de edición de datos con validaciones automáticas de integridad referencial.
+<div class="fitlife-admin-model-header" style="background: var(--fitlife-surface); border: 1px solid var(--border-color); border-left: 5px solid #FFC400; padding: 14px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+  <div>
+    <span style="color: #FFC400; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px;">
+      {% if add %}Creación de Registro &middot; {{ opts.verbose_name|capfirst }}{% else %}Edición &middot; {{ original|truncatewords:6 }}{% endif %}
+    </span>
+    <p style="margin: 4px 0 0 0; color: var(--body-quiet-color); font-size: 13px;">
+      {% if opts.model_name == 'user' %}
+        Configuración de credenciales de acceso, asignación de rol FitLife (Socio, Recepción, Admin) y pertenencia a grupos.
+      {% elif opts.model_name == 'memberprofile' %}
+        Ficha individual del socio. Verifica los datos de contacto y la generación automática del código QR de acceso.
+      {% elif opts.model_name == 'plan' %}
+        Parámetros del plan comercial: define precio mensual, valor de matrícula y activa la casilla destacado si aplica.
+      {% elif opts.model_name == 'membership' %}
+        Suscripción deportiva. Recuerda que la regla de negocio exige como máximo una membresía activa vigente por socio.
+      {% elif opts.model_name == 'classsession' %}
+        Programación de sesión deportiva: instructor asignado, sala de entrenamiento y límite máximo de cupos.
+      {% elif opts.model_name == 'facilitysetting' %}
+        Configuración central de la sede (Singleton). Define el aforo máximo y los porcentajes del semáforo de alerta.
+      {% elif opts.model_name == 'accesslog' %}
+        Registro manual de acceso al recinto deportivo por contingencia en el escáner de recepción.
+      {% else %}
+        Formulario con validación en tiempo real de reglas de negocio e integridad de datos FitLife.
+      {% endif %}
+    </p>
+  </div>
+  <div>
+    {% if not add and has_change_permission %}
+      {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+      <a href="{{ history_url }}" class="button button-outline" style="font-size: 11px; padding: 6px 12px; min-height: 32px;" title="Ver auditoría de modificaciones">
+        📜 Ver Historial
+      </a>
     {% endif %}
-  </p>
+  </div>
 </div>
+
 {{ block.super }}
 {% endblock %}
-

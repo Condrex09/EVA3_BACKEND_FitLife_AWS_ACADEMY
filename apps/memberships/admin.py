@@ -20,12 +20,16 @@ def export_to_csv(modeladmin, request, queryset):
 
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ['name', 'monthly_price_clp', 'enrollment_price_clp', 'duration_days', 'loyalty_months', 'is_featured', 'is_active', 'order']
+    list_display = ['name', 'monthly_price', 'enrollment_price_clp', 'duration_days', 'loyalty_months', 'is_featured', 'is_active', 'order']
+    list_editable = ['monthly_price', 'is_featured', 'is_active', 'order']
     list_filter = ['is_active', 'is_featured']
     search_fields = ['name', 'description']
     prepopulated_fields = {'slug': ('name',)}
     ordering = ['order', 'monthly_price']
     actions = [export_to_csv]
+    save_as = True
+    save_on_top = True
+    list_per_page = 25
 
     def monthly_price_clp(self, obj):
         return f"${obj.monthly_price:,} CLP"
@@ -40,10 +44,14 @@ class MembershipAdmin(admin.ModelAdmin):
     list_display = ['id', 'member', 'plan', 'status_badge', 'start_date', 'end_date', 'days_left', 'created_at']
     list_filter = ['status', 'plan', 'start_date', 'end_date']
     search_fields = ['member__username', 'member__first_name', 'member__last_name', 'member__profile__rut', 'plan__name']
+    autocomplete_fields = ['member', 'plan']
     date_hierarchy = 'start_date'
     actions = ['action_freeze_30_days', 'action_mark_expired', 'action_unfreeze', export_to_csv]
     ordering = ['-created_at']
     readonly_fields = ['created_at']
+    save_on_top = True
+    list_per_page = 25
+    show_full_result_count = False
 
     def status_badge(self, obj):
         colors = {
@@ -106,10 +114,14 @@ class PaymentAdmin(admin.ModelAdmin):
     list_display = ['reference', 'member', 'amount_clp', 'concept', 'method', 'status_badge', 'paid_at']
     list_filter = ['status', 'concept', 'method', 'paid_at']
     search_fields = ['reference', 'member__username', 'member__first_name', 'member__last_name', 'member__profile__rut']
+    autocomplete_fields = ['member']
     date_hierarchy = 'paid_at'
     readonly_fields = ['reference', 'paid_at']
     actions = ['action_approve_payments', export_to_csv]
     ordering = ['-paid_at']
+    save_on_top = True
+    list_per_page = 25
+    show_full_result_count = False
 
     def amount_clp(self, obj):
         return f"${obj.amount:,} CLP"

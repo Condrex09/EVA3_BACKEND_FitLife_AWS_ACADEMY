@@ -1,36 +1,161 @@
-{% extends "admin/index.html" %}
-{% load fitlife_tags %}
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_filters log fitlife_tags %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
 
 {% block content %}
+<div id="content-main" style="width: 100%;">
   {% get_admin_metrics as metrics %}
-  
-  <!-- Tarjetas de Métricas en Tiempo Real FitLife -->
+
+  <!-- 1. Tarjetas de Métricas en Tiempo Real (Fila Superior) -->
   <div class="fitlife-metrics-container">
+    <!-- Socios Activos -->
     <div class="fitlife-metric-card">
-      <div class="fitlife-metric-title">Socios Activos</div>
+      <div class="fitlife-metric-top">
+        <span class="fitlife-metric-title">Socios Activos</span>
+        <div class="fitlife-metric-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+        </div>
+      </div>
       <div class="fitlife-metric-value" style="color: #28A745;">{{ metrics.active_members }}</div>
-      <div class="fitlife-metric-desc">Membresías vigentes hoy</div>
+      <div class="fitlife-metric-desc">Membresías vigentes al día de hoy</div>
+      {% url 'admin:memberships_membership_changelist' as mem_url %}
+      {% if mem_url %}
+        <a href="{{ mem_url }}" class="fitlife-metric-link">Ver Membresías &rarr;</a>
+      {% endif %}
     </div>
 
+    <!-- Ingresos de Hoy -->
     <div class="fitlife-metric-card">
-      <div class="fitlife-metric-title">Ingresos de Hoy</div>
+      <div class="fitlife-metric-top">
+        <span class="fitlife-metric-title">Ingresos de Hoy</span>
+        <div class="fitlife-metric-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
       <div class="fitlife-metric-value" style="color: #FFC400;">${{ metrics.today_income|floatformat:0 }} CLP</div>
-      <div class="fitlife-metric-desc">Pagos aprobados del día</div>
+      <div class="fitlife-metric-desc">Pagos aprobados recibidos hoy</div>
+      {% url 'admin:memberships_payment_changelist' as pay_url %}
+      {% if pay_url %}
+        <a href="{{ pay_url }}" class="fitlife-metric-link">Ver Recaudación &rarr;</a>
+      {% endif %}
     </div>
 
+    <!-- Aforo Actual de la Sede -->
     <div class="fitlife-metric-card">
-      <div class="fitlife-metric-title">Aforo Actual de la Sede</div>
+      <div class="fitlife-metric-top">
+        <span class="fitlife-metric-title">Aforo Actual de la Sede</span>
+        <div class="fitlife-metric-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+        </div>
+      </div>
       <div class="fitlife-metric-value" style="color: #17A2B8;">{{ metrics.current_occupancy }} / {{ metrics.max_capacity }}</div>
-      <div class="fitlife-metric-desc">Personas dentro del recinto</div>
+      <div class="fitlife-metric-desc">Socios dentro del recinto en tiempo real</div>
+      {% url 'admin:access_accesslog_changelist' as acc_url %}
+      {% if acc_url %}
+        <a href="{{ acc_url }}" class="fitlife-metric-link">Ver Bitácora de Acceso &rarr;</a>
+      {% endif %}
     </div>
 
+    <!-- Reservas de Clases Hoy -->
     <div class="fitlife-metric-card">
-      <div class="fitlife-metric-title">Reservas de Clases Hoy</div>
+      <div class="fitlife-metric-top">
+        <span class="fitlife-metric-title">Reservas de Clases Hoy</span>
+        <div class="fitlife-metric-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+      </div>
       <div class="fitlife-metric-value" style="color: #FFFFFF;">{{ metrics.today_bookings }}</div>
-      <div class="fitlife-metric-desc">Cupos confirmados para hoy</div>
+      <div class="fitlife-metric-desc">Cupos confirmados para sesiones de hoy</div>
+      {% url 'admin:classes_booking_changelist' as book_url %}
+      {% if book_url %}
+        <a href="{{ book_url }}" class="fitlife-metric-link">Ver Reservas &rarr;</a>
+      {% endif %}
     </div>
   </div>
 
-  {{ block.super }}
-{% endblock %}
+  <!-- 2. Rejilla Inferior: Módulos en 2 columnas + Acciones Recientes -->
+  <div class="fitlife-dashboard-grid">
+    <!-- Columna Izquierda: Módulos de la Plataforma -->
+    <div class="fitlife-modules-column">
+      {% if app_list %}
+        {% for app in app_list %}
+          <div class="app-{{ app.app_label }} module">
+            <table>
+              <caption>
+                <a href="{{ app.app_url }}" class="section">{{ app.name }}</a>
+              </caption>
+              <tbody>
+                {% for model in app.models %}
+                  <tr class="model-{{ model.object_name|lower }}">
+                    <th scope="row">
+                      {% if model.admin_url %}
+                        <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                      {% else %}
+                        {{ model.name }}
+                      {% endif %}
+                    </th>
+                    <td>
+                      {% if model.add_url %}
+                        <a href="{{ model.add_url }}" class="fitlife-btn-add" title="Agregar nuevo registro">+ Añadir</a>
+                      {% endif %}
+                      {% if model.admin_url %}
+                        <a href="{{ model.admin_url }}" class="fitlife-btn-change" title="Ver y modificar registros">Modificar</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="module" style="padding: 20px;">
+          <p style="margin: 0; color: var(--body-quiet-color);">No tienes permisos configurados para gestionar módulos en este panel.</p>
+        </div>
+      {% endif %}
+    </div>
 
+    <!-- Columna Derecha: Tarjeta de Acciones Recientes -->
+    <div id="recent-actions-module">
+      <h2>{% translate 'Recent actions' %}</h2>
+      <h3>{% translate 'My actions' %}</h3>
+      {% get_admin_log 12 as admin_log for_user user %}
+      {% if not admin_log %}
+        <p style="padding: 16px 18px; color: var(--body-quiet-color); margin: 0; font-size: 13px;">
+          No registras acciones administrativas recientes.
+        </p>
+      {% else %}
+        <ul class="actionlist">
+          {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+              {% if entry.is_deletion or not entry.get_admin_url %}
+                <strong>{{ entry.object_repr }}</strong>
+              {% else %}
+                <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+              {% endif %}
+              <br>
+              {% if entry.content_type %}
+                <span style="font-size: 11px; color: var(--body-quiet-color);">{{ entry.content_type.name|capfirst }}</span>
+              {% else %}
+                <span style="font-size: 11px; color: var(--body-quiet-color);">Registro del sistema</span>
+              {% endif %}
+              <span style="font-size: 11px; color: var(--body-quiet-color); float: right;">{{ entry.action_time|date:"d/m H:i" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

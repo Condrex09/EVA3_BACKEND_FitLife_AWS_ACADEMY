@@ -15,9 +15,12 @@ class BookingInline(admin.TabularInline):
 @admin.register(ClassType)
 class ClassTypeAdmin(admin.ModelAdmin):
     list_display = ['name', 'duration_minutes', 'intensity_badge', 'is_active']
+    list_editable = ['duration_minutes', 'is_active']
     list_filter = ['intensity', 'is_active']
     search_fields = ['name', 'description']
     prepopulated_fields = {'slug': ('name',)}
+    save_on_top = True
+    list_per_page = 25
 
     def intensity_badge(self, obj):
         colors = {
@@ -41,9 +44,13 @@ class ClassSessionAdmin(admin.ModelAdmin):
     list_display = ['class_type', 'start_datetime', 'instructor_name', 'room', 'occupancy_badge', 'status_badge']
     list_filter = ['status', 'class_type', 'room', 'start_datetime']
     search_fields = ['class_type__name', 'instructor_name', 'room']
+    autocomplete_fields = ['class_type']
     date_hierarchy = 'start_datetime'
     ordering = ['-start_datetime']
     actions = ['action_cancel_sessions']
+    save_as = True
+    save_on_top = True
+    list_per_page = 25
 
     def occupancy_badge(self, obj):
         confirmed = obj.confirmed_count
@@ -85,9 +92,13 @@ class BookingAdmin(admin.ModelAdmin):
     list_display = ['id', 'session_info', 'member_info', 'status_badge', 'waitlist_position', 'created_at']
     list_filter = ['status', 'session__class_type', 'session__start_datetime']
     search_fields = ['member__username', 'member__first_name', 'member__last_name', 'session__class_type__name']
+    autocomplete_fields = ['member', 'session']
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
     actions = ['action_mark_attended', 'action_mark_no_show']
+    save_on_top = True
+    list_per_page = 25
+    show_full_result_count = False
 
     def session_info(self, obj):
         start = obj.session.start_datetime.strftime('%d/%m %H:%M')

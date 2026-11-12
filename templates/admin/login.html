@@ -1,0 +1,132 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Acceso al Panel | FitLife Admin{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 220px); display: flex; align-items: center; justify-content: center; padding: 20px;">
+  <div style="width: 100%; max-width: 440px; margin: 0 auto;">
+
+    <!-- Encabezado con Logo FitLife -->
+    <div style="text-align: center; margin-bottom: 24px;">
+      <a href="{% url 'home' %}" style="display: inline-block; text-decoration: none;">
+        <img src="{% static 'img/logo.svg' %}" alt="FitLife Centro Deportivo" style="height: 52px; margin-bottom: 12px;">
+      </a>
+      <h1 style="color: #FFFFFF; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; margin: 0 0 6px 0;">
+        PANEL <span style="color: #FFC400;">FITLIFE</span>
+      </h1>
+      <p style="color: #A0A0A0; font-size: 13px; margin: 0;">
+        Portal administrativo interno y gestión integral del centro deportivo.
+      </p>
+    </div>
+
+    <!-- Tarjeta de Login -->
+    <div style="background: #181818; border: 1px solid #383838; border-top: 3px solid #FFC400; border-radius: 10px; padding: 28px 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+      
+      {% if form.errors and not form.non_field_errors %}
+        <div class="errornote" style="margin-bottom: 18px; padding: 10px 14px; font-size: 12px;">
+          Por favor verifica los datos ingresados en el formulario.
+        </div>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+          <div class="errornote" style="margin-bottom: 18px; padding: 10px 14px; font-size: 12px;">
+            {{ error }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <div class="errornote" style="margin-bottom: 18px; padding: 10px 14px; font-size: 12px;">
+          Has iniciado sesión como <strong>{{ username }}</strong>, pero tu cuenta no cuenta con permisos administrativos en este panel.
+        </div>
+      {% endif %}
+
+      <form action="{{ app_path }}" method="post" id="login-form">
+        {% csrf_token %}
+        
+        <div class="form-row" style="padding: 0; margin-bottom: 16px; border: none;">
+          <label for="id_username" style="display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #FFFFFF; margin-bottom: 6px;">
+            Usuario o Correo Electrónico
+          </label>
+          <input type="text" name="username" id="id_username" required autofocus 
+                 placeholder="Ej: admin o admin@fitlife.cl"
+                 style="width: 100%; box-sizing: border-box; background: #111111; border: 1px solid #444; color: #FFFFFF; border-radius: 6px; padding: 10px 14px; font-size: 13px;">
+          {{ form.username.errors }}
+        </div>
+
+        <div class="form-row" style="padding: 0; margin-bottom: 20px; border: none;">
+          <label for="id_password" style="display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #FFFFFF; margin-bottom: 6px;">
+            Contraseña
+          </label>
+          <input type="password" name="password" id="id_password" required 
+                 placeholder="Ingresa tu contraseña"
+                 style="width: 100%; box-sizing: border-box; background: #111111; border: 1px solid #444; color: #FFFFFF; border-radius: 6px; padding: 10px 14px; font-size: 13px;">
+          {{ form.password.errors }}
+          <input type="hidden" name="next" value="{{ next }}">
+        </div>
+
+        <div style="margin-top: 10px;">
+          <input type="submit" value="INGRESAR AL PANEL" 
+                 style="width: 100%; background: #FFC400; color: #111111; font-weight: 900; border: none; border-radius: 6px; padding: 12px 20px; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
+        </div>
+      </form>
+
+      <div style="text-align: center; margin-top: 20px; border-top: 1px solid #282828; padding-top: 14px;">
+        <a href="{% url 'home' %}" style="color: #A0A0A0; font-size: 12px; text-decoration: none;">
+          &larr; Volver al Portal Público FitLife
+        </a>
+      </div>
+    </div>
+
+    <!-- Tarjeta de Credenciales de Demostración (si está configurada) -->
+    <div id="demo-credentials-card" style="margin-top: 18px; background: #181818; border: 1.5px solid #FFC400; border-radius: 8px; padding: 14px 18px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #FFC400; font-weight: 800;">
+          🛡️ Cuenta Administrador (Demo)
+        </span>
+        <button type="button" id="btn-autocomplete-admin" 
+                style="background: #FFC400; color: #111; border: none; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 4px; cursor: pointer;">
+          ⚡ Autocompletar
+        </button>
+      </div>
+      <div style="font-size: 12px; color: #BBB; line-height: 1.6;">
+        <div><strong style="color: #fff;">Usuario:</strong> <code style="color: #FFC400; background: #111; padding: 2px 6px; border-radius: 4px;">admin</code> <span style="font-size: 11px;">(o admin@fitlife.cl)</span></div>
+        <div style="margin-top: 4px;"><strong style="color: #fff;">Contraseña:</strong> <code style="color: #FFC400; background: #111; padding: 2px 6px; border-radius: 4px;">Admin#FitLife2026</code></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('btn-autocomplete-admin');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        var userInput = document.getElementById('id_username');
+        var passInput = document.getElementById('id_password');
+        if (userInput && passInput) {
+          userInput.value = 'admin';
+          passInput.value = 'Admin#FitLife2026';
+          userInput.focus();
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}
+

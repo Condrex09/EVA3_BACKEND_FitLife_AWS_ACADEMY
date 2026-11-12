@@ -1,161 +1,1296 @@
 /* ==========================================================================
-   FitLife - Django Admin Custom Stylesheet
-   Branding FitLife: Amarillo (#FFC400), Negro (#111111) y Grises
+   FitLife - Django Admin Custom Stylesheet & Design System
+   Paleta: Amarillo (#FFC400), Negro (#111111 / #181818), Superficies (#222222),
+           Bordes (#383838), Texto (#F5F5F5 / #A0A0A0)
    Autor: Benjamin Gomez · Sección AP-N4-C1 · INACAP · EVA 3 Backend
    ========================================================================== */
 
-:root {
-  --admin-yellow: #FFC400;
-  --admin-yellow-dark: #D4A000;
-  --admin-black: #111111;
-  --admin-dark: #1F1F1F;
-  --admin-card: #282828;
-  --admin-border: #383838;
+/* --------------------------------------------------------------------------
+   1. Sistema de diseño y variables CSS (Dark y Light theme)
+   -------------------------------------------------------------------------- */
+:root,
+html[data-theme="dark"],
+html[data-theme="auto"] {
+  --primary: #FFC400;
+  --secondary: #181818;
+  --accent: #FFC400;
+  --primary-fg: #111111;
+
+  --body-fg: #F5F5F5;
+  --body-bg: #111111;
+  --body-quiet-color: #A0A0A0;
+  --body-medium-color: #CCCCCC;
+  --body-loud-color: #FFFFFF;
+
+  --header-bg: #111111;
+  --header-color: #FFFFFF;
+  --header-branding-color: #FFC400;
+  --header-link-color: #FFC400;
+
+  --breadcrumbs-bg: #181818;
+  --breadcrumbs-fg: #A0A0A0;
+  --breadcrumbs-link-fg: #FFC400;
+
+  --link-fg: #FFC400;
+  --link-hover-color: #FFE082;
+  --link-selected-fg: #FFC400;
+
+  --hairline-color: #2D2D2D;
+  --border-color: #383838;
+  --darkest-bg: #0D0D0D;
+  --darker-bg: #141414;
+  --darkened-bg: #1E1E1E;
+
+  --selected-bg: #2C260D;
+  --selected-row: #2C260D;
+
+  --button-fg: #111111;
+  --button-bg: #FFC400;
+  --button-hover-bg: #D4A000;
+  --default-button-bg: #FFC400;
+  --default-button-hover-bg: #D4A000;
+
+  --close-button-bg: #383838;
+  --close-button-hover-bg: #4E4E4E;
+  --delete-button-bg: #DC3545;
+  --delete-button-hover-bg: #BD2130;
+
+  --message-success-bg: #1E3A24;
+  --message-warning-bg: #423812;
+  --message-error-bg: #3D181A;
+  --message-info-bg: #133240;
+
+  --object-tools-fg: #111111;
+  --object-tools-bg: #FFC400;
+  --object-tools-hover-bg: #D4A000;
+
+  --fitlife-surface: #1E1E1E;
+  --fitlife-surface-alt: #262626;
+  --fitlife-input-bg: #181818;
 }
 
-/* Header de Django Admin */
+html[data-theme="light"] {
+  --primary: #D4A000;
+  --secondary: #1F1F1F;
+  --accent: #B38600;
+  --primary-fg: #FFFFFF;
+
+  --body-fg: #1F1F1F;
+  --body-bg: #F8F9FA;
+  --body-quiet-color: #666666;
+  --body-medium-color: #333333;
+  --body-loud-color: #000000;
+
+  --header-bg: #111111;
+  --header-color: #FFFFFF;
+  --header-branding-color: #FFC400;
+  --header-link-color: #FFC400;
+
+  --breadcrumbs-bg: #181818;
+  --breadcrumbs-fg: #CCCCCC;
+  --breadcrumbs-link-fg: #FFC400;
+
+  --link-fg: #B38600;
+  --link-hover-color: #8C6800;
+  --link-selected-fg: #B38600;
+
+  --hairline-color: #E2E2E2;
+  --border-color: #CCCCCC;
+  --darkest-bg: #EEEEEE;
+  --darker-bg: #E4E4E4;
+  --darkened-bg: #EAEAEA;
+
+  --selected-bg: #FFF4D0;
+  --selected-row: #FFF7DA;
+
+  --button-fg: #111111;
+  --button-bg: #FFC400;
+  --button-hover-bg: #D4A000;
+  --default-button-bg: #FFC400;
+  --default-button-hover-bg: #D4A000;
+
+  --close-button-bg: #6C757D;
+  --close-button-hover-bg: #5A6268;
+  --delete-button-bg: #DC3545;
+  --delete-button-hover-bg: #BD2130;
+
+  --message-success-bg: #D4EDDA;
+  --message-warning-bg: #FFF3CD;
+  --message-error-bg: #F8D7DA;
+  --message-info-bg: #D1ECF1;
+
+  --object-tools-fg: #111111;
+  --object-tools-bg: #FFC400;
+  --object-tools-hover-bg: #D4A000;
+
+  --fitlife-surface: #FFFFFF;
+  --fitlife-surface-alt: #F1F3F5;
+  --fitlife-input-bg: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   2. Tipografía y Base Global
+   -------------------------------------------------------------------------- */
+body, input, textarea, select, button {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+body {
+  letter-spacing: -0.15px;
+}
+
+h1, h2, h3, h4, th {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   3. Header y Branding FitLife
+   -------------------------------------------------------------------------- */
 #header {
   background: #111111 !important;
   color: #FFFFFF !important;
-  border-bottom: 3px solid var(--admin-yellow) !important;
+  border-bottom: 3px solid #FFC400 !important;
   padding: 12px 24px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+#header #branding {
+  float: left;
 }
 
 #header #branding h1 {
-  font-family: 'Montserrat', sans-serif !important;
+  font-size: 20px !important;
   font-weight: 900 !important;
-  font-size: 22px !important;
+  margin: 0 !important;
   letter-spacing: -0.5px !important;
 }
 
-#header #branding h1 a:link, 
-#header #branding h1 a:visited {
-  color: #FFFFFF !important;
-}
-
-#header #branding h1 span.yellow-accent {
-  color: var(--admin-yellow) !important;
+#header #branding a {
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
 }
 
 #user-tools {
   font-size: 13px !important;
   color: #CCCCCC !important;
+  font-weight: 500;
+  padding-top: 4px;
 }
 
 #user-tools a {
-  color: var(--admin-yellow) !important;
-  font-weight: 600 !important;
+  color: #FFC400 !important;
+  font-weight: 700 !important;
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 #user-tools a:hover {
-  text-decoration: underline !important;
+  color: #FFE082 !important;
+  text-decoration: underline;
 }
 
-/* Barra de navegación secundaria (breadcrumbs) */
+/* --------------------------------------------------------------------------
+   4. Breadcrumbs
+   -------------------------------------------------------------------------- */
 div.breadcrumbs {
   background: #181818 !important;
-  color: #BBBBBB !important;
-  border-bottom: 1px solid var(--admin-border) !important;
+  color: #A0A0A0 !important;
+  border-bottom: 1px solid var(--border-color) !important;
   font-size: 12px !important;
   padding: 10px 24px !important;
+  font-weight: 500;
 }
 
 div.breadcrumbs a {
-  color: var(--admin-yellow) !important;
+  color: #FFC400 !important;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-/* Botones principales en Django Admin */
+div.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   5. Botones y Elementos de Acción
+   -------------------------------------------------------------------------- */
 .button, input[type=submit], input[type=button], .submit-row input, a.button {
-  background: var(--admin-yellow) !important;
-  color: #000000 !important;
-  border: none !important;
+  background: #FFC400 !important;
+  color: #111111 !important;
+  border: 1px solid #FFC400 !important;
   border-radius: 6px !important;
   font-weight: 700 !important;
-  font-family: 'Montserrat', sans-serif !important;
+  font-size: 12px !important;
+  padding: 9px 18px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+}
+
+.button:hover, input[type=submit]:hover, .submit-row input:hover, a.button:hover {
+  background: #D4A000 !important;
+  border-color: #D4A000 !important;
+  color: #111111 !important;
+  box-shadow: 0 4px 12px rgba(255, 196, 0, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+/* Botón secundario contorno */
+.button.button-outline, a.button-outline, .btn-fitlife-secondary {
+  background: transparent !important;
+  color: var(--body-fg) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.button.button-outline:hover, a.button-outline:hover, .btn-fitlife-secondary:hover {
+  background: var(--fitlife-surface-alt) !important;
+  border-color: #FFC400 !important;
+  color: #FFC400 !important;
+  box-shadow: none !important;
+}
+
+/* Botón de Peligro / Eliminar */
+.button.btn-danger, a.deletelink, .submit-row a.deletelink {
+  background: #DC3545 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #DC3545 !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  padding: 9px 18px !important;
   text-transform: uppercase !important;
   font-size: 12px !important;
-  padding: 8px 16px !important;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
   transition: all 0.2s ease !important;
 }
 
-.button:hover, input[type=submit]:hover, .submit-row input:hover {
-  background: var(--admin-yellow-dark) !important;
-  color: #000000 !important;
-  box-shadow: 0 4px 10px rgba(255, 196, 0, 0.3) !important;
-}
-
-.button.default, input[type=submit].default, .submit-row input.default {
-  background: var(--admin-yellow) !important;
-  color: #000000 !important;
-}
-
-/* Tablas y Listados */
-#changelist table thead th {
-  background: #1A1A1A !important;
-  border-bottom: 2px solid var(--admin-yellow) !important;
-}
-
-#changelist table thead th a {
+.button.btn-danger:hover, a.deletelink:hover, .submit-row a.deletelink:hover {
+  background: #BD2130 !important;
+  border-color: #BD2130 !important;
   color: #FFFFFF !important;
-  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4) !important;
 }
 
-/* Dashboard Metrics Cards en index.html */
+/* --------------------------------------------------------------------------
+   6. Dashboard de Administración (index.html)
+   -------------------------------------------------------------------------- */
+.dashboard #content {
+  width: 100% !important;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+/* Métricas Superiores */
 .fitlife-metrics-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
   margin-bottom: 28px;
+  width: 100%;
 }
 
 .fitlife-metric-card {
-  background: #1E1E1E;
-  border: 1px solid var(--admin-border);
-  border-left: 5px solid var(--admin-yellow);
-  border-radius: 8px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease;
+  background: var(--fitlife-surface);
+  border: 1px solid var(--border-color);
+  border-left: 5px solid #FFC400;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .fitlife-metric-card:hover {
   transform: translateY(-3px);
-  border-color: var(--admin-yellow);
+  border-color: #FFC400;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.fitlife-metric-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.fitlife-metric-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 196, 0, 0.12);
+  color: #FFC400;
 }
 
 .fitlife-metric-title {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #AAAAAA;
-  font-weight: 700;
-  margin-bottom: 6px;
+  color: var(--body-quiet-color);
+  font-weight: 800;
 }
 
 .fitlife-metric-value {
-  font-size: 26px;
+  font-size: 30px;
   font-weight: 900;
-  color: #FFFFFF;
+  color: var(--body-loud-color);
+  line-height: 1.1;
+  margin: 4px 0 6px 0;
+  letter-spacing: -0.5px;
 }
 
 .fitlife-metric-desc {
-  font-size: 11px;
-  color: var(--admin-yellow);
-  margin-top: 4px;
+  font-size: 12px;
+  color: var(--body-quiet-color);
+  margin-bottom: 12px;
 }
 
-/* Footer institucional en Django Admin */
-.admin-footer-fitlife {
-  text-align: center;
-  padding: 24px;
-  margin-top: 40px;
-  background: #111111;
-  border-top: 2px solid var(--admin-yellow);
-  color: #BBBBBB;
+.fitlife-metric-link {
+  font-size: 11px;
+  font-weight: 700;
+  color: #FFC400;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-top: 1px solid var(--hairline-color);
+  padding-top: 10px;
+}
+
+.fitlife-metric-link:hover {
+  color: #FFE082;
+  text-decoration: underline;
+}
+
+/* Rejilla Principal del Dashboard: Módulos a la izquierda, Acciones recientes a la derecha */
+.fitlife-dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+}
+
+.fitlife-modules-column {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Tarjetas de Módulo/App */
+.fitlife-dashboard-grid .module,
+#content-main .module {
+  background: var(--fitlife-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+.fitlife-dashboard-grid .module caption,
+#content-main .module caption {
+  background: var(--darker-bg);
+  padding: 12px 18px;
+  border-bottom: 2px solid #FFC400;
+  text-align: left;
+}
+
+.fitlife-dashboard-grid .module caption a.section,
+#content-main .module caption a.section {
+  color: #FFC400 !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+
+/* Filas de modelos en el módulo */
+.fitlife-dashboard-grid .module table,
+#content-main .module table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fitlife-dashboard-grid .module tr,
+#content-main .module tr {
+  border-bottom: 1px solid var(--hairline-color);
+  transition: background 0.15s ease;
+}
+
+.fitlife-dashboard-grid .module tr:hover,
+#content-main .module tr:hover {
+  background: var(--fitlife-surface-alt);
+}
+
+.fitlife-dashboard-grid .module th,
+#content-main .module th {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fitlife-dashboard-grid .module th a,
+#content-main .module th a {
+  color: var(--body-fg);
+  text-decoration: none;
+}
+
+.fitlife-dashboard-grid .module th a:hover,
+#content-main .module th a:hover {
+  color: #FFC400;
+  text-decoration: underline;
+}
+
+.fitlife-dashboard-grid .module td,
+#content-main .module td {
+  padding: 8px 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Botones de acción en filas de módulos del Dashboard */
+.fitlife-btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #FFC400;
+  color: #111111 !important;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none !important;
+  text-transform: uppercase;
+  margin-right: 6px;
+  transition: background 0.15s ease;
+}
+
+.fitlife-btn-add:hover {
+  background: #D4A000;
+  color: #111111 !important;
+}
+
+.fitlife-btn-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  color: var(--body-quiet-color) !important;
+  border: 1px solid var(--border-color);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 5px;
+  text-decoration: none !important;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+}
+
+.fitlife-btn-change:hover {
+  border-color: #FFC400;
+  color: #FFC400 !important;
+  background: var(--fitlife-surface-alt);
+}
+
+/* Tarjeta Acciones Recientes en Dashboard */
+#recent-actions-module {
+  background: var(--fitlife-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 10px !important;
+  padding: 0 !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#recent-actions-module h2 {
+  background: var(--darker-bg);
+  color: #FFFFFF !important;
+  border-bottom: 2px solid #FFC400;
+  padding: 12px 18px;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+#recent-actions-module h3 {
+  padding: 10px 18px 0 18px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--body-quiet-color);
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+#recent-actions-module ul.actionlist {
+  list-style: none;
+  padding: 12px 18px;
+  margin: 0;
+}
+
+#recent-actions-module ul.actionlist li {
+  padding: 10px 0 10px 28px;
+  position: relative;
+  border-bottom: 1px solid var(--hairline-color);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+#recent-actions-module ul.actionlist li:last-child {
+  border-bottom: none;
+}
+
+/* Indicadores de línea de tiempo según acción */
+#recent-actions-module ul.actionlist li::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #6C757D;
+}
+
+#recent-actions-module ul.actionlist li.addlink::before {
+  background: #28A745; /* Verde añadir */
+  box-shadow: 0 0 6px rgba(40, 167, 69, 0.6);
+}
+
+#recent-actions-module ul.actionlist li.changelink::before {
+  background: #FFC400; /* Amarillo modificar */
+  box-shadow: 0 0 6px rgba(255, 196, 0, 0.6);
+}
+
+#recent-actions-module ul.actionlist li.deletelink::before {
+  background: #DC3545; /* Rojo eliminar */
+  box-shadow: 0 0 6px rgba(220, 53, 69, 0.6);
+}
+
+#recent-actions-module ul.actionlist li a {
+  color: #FFC400;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#recent-actions-module ul.actionlist li a:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   7. Listados de Modelos (change_list.html)
+   -------------------------------------------------------------------------- */
+#changelist {
+  background: transparent;
+}
+
+/* Botón superior "+ Añadir [modelo]" */
+.object-tools {
+  margin-bottom: 16px;
+  float: right;
+}
+
+.object-tools li {
+  list-style: none;
+}
+
+.object-tools a, .object-tools a.addlink {
+  background: #FFC400 !important;
+  color: #111111 !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
+  padding: 10px 18px !important;
+  border-radius: 6px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 2px 8px rgba(255, 196, 0, 0.3) !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.object-tools a:hover, .object-tools a.addlink:hover {
+  background: #D4A000 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(255, 196, 0, 0.45) !important;
+}
+
+/* Barra de Búsqueda */
+#toolbar {
+  background: var(--fitlife-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 12px 18px !important;
+  margin-bottom: 16px !important;
+}
+
+#changelist-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+#changelist-search input[type="text"] {
+  background: var(--fitlife-input-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--body-fg) !important;
+  border-radius: 6px !important;
+  padding: 9px 14px !important;
+  font-size: 13px !important;
+  min-width: 280px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#changelist-search input[type="text"]:focus {
+  border-color: #FFC400 !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.25) !important;
+}
+
+/* Barra de Acciones por Lote (actions.html) */
+.actions {
+  background: var(--fitlife-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 12px 18px !important;
+  margin-bottom: 16px !important;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.actions label {
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--body-fg);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actions select {
+  background: var(--fitlife-input-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--body-fg) !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  min-width: 220px;
+}
+
+.actions select:focus {
+  border-color: #FFC400 !important;
+  outline: none;
+}
+
+.actions .action-counter {
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFC400;
+  background: rgba(255, 196, 0, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 196, 0, 0.3);
+}
+
+/* Tabla de Resultados */
+#changelist .results {
+  background: var(--fitlife-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+}
+
+#changelist table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#changelist table thead th {
+  background: var(--darker-bg) !important;
+  border-bottom: 2px solid #FFC400 !important;
+  padding: 12px 16px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: var(--body-loud-color) !important;
+}
+
+#changelist table thead th a {
+  color: var(--body-loud-color) !important;
+  text-decoration: none;
+}
+
+#changelist table thead th a:hover {
+  color: #FFC400 !important;
+}
+
+#changelist table tbody tr {
+  border-bottom: 1px solid var(--hairline-color);
+  transition: background 0.15s ease;
+}
+
+#changelist table tbody tr:hover {
+  background: var(--fitlife-surface-alt) !important;
+}
+
+#changelist table tbody tr.selected {
+  background: var(--selected-row) !important;
+}
+
+#changelist table tbody td,
+#changelist table tbody th {
+  padding: 12px 16px !important;
+  font-size: 13px !important;
+  vertical-align: middle;
+}
+
+#changelist table tbody th a {
+  color: #FFC400 !important;
+  font-weight: 700 !important;
+  text-decoration: none;
+}
+
+#changelist table tbody th a:hover {
+  text-decoration: underline;
+}
+
+/* Checkbox estilizado */
+input[type="checkbox"], input[type="radio"] {
+  accent-color: #FFC400;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Filtros Laterales (changelist-filter) */
+#changelist-filter {
+  background: var(--fitlife-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#changelist-filter h2 {
+  background: var(--darker-bg) !important;
+  color: #FFFFFF !important;
+  border-bottom: 2px solid #FFC400 !important;
+  padding: 12px 16px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+#changelist-filter h3 {
+  font-size: 11px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #FFC400 !important;
+  font-weight: 800;
+  padding: 12px 16px 4px 16px;
+  margin: 0;
+}
+
+#changelist-filter ul {
+  padding: 4px 16px 12px 16px;
+  margin: 0;
+  border-bottom: 1px solid var(--hairline-color);
+}
+
+#changelist-filter li {
+  margin: 4px 0;
+  font-size: 12px;
+}
+
+#changelist-filter li.selected a {
+  color: #FFC400 !important;
+  font-weight: 800;
+  border-left: 3px solid #FFC400;
+  padding-left: 6px;
+}
+
+#changelist-filter a {
+  color: var(--body-quiet-color);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+#changelist-filter a:hover {
+  color: #FFC400;
+}
+
+/* Paginador */
+.paginator {
+  background: var(--fitlife-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 12px 18px !important;
+  font-size: 12px !important;
+  color: var(--body-quiet-color) !important;
+  font-weight: 600;
+}
+
+.paginator a {
+  color: #FFC400 !important;
+  font-weight: 700;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  text-decoration: none;
+  margin: 0 3px;
+}
+
+.paginator a:hover {
+  background: var(--fitlife-surface-alt);
+  border-color: #FFC400;
+}
+
+/* --------------------------------------------------------------------------
+   8. Formulario de Edición (change_form.html)
+   -------------------------------------------------------------------------- */
+.change-form #content-main {
+  max-width: 1200px;
+}
+
+fieldset.module {
+  background: var(--fitlife-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  margin-bottom: 24px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+fieldset.module h2 {
+  background: var(--darker-bg) !important;
+  color: #FFFFFF !important;
+  border-left: 4px solid #FFC400;
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 18px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.form-row {
+  padding: 14px 20px !important;
+  border-bottom: 1px solid var(--hairline-color);
+}
+
+.form-row:last-child {
+  border-bottom: none;
+}
+
+.form-row label {
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  color: var(--body-fg) !important;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+
+.form-row input[type="text"],
+.form-row input[type="password"],
+.form-row input[type="email"],
+.form-row input[type="url"],
+.form-row input[type="number"],
+.form-row input[type="date"],
+.form-row input[type="time"],
+.form-row input[type="datetime-local"],
+.form-row textarea,
+.form-row select {
+  background: var(--fitlife-input-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--body-fg) !important;
+  border-radius: 6px !important;
+  padding: 9px 12px !important;
+  font-size: 13px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-row input:focus,
+.form-row textarea:focus,
+.form-row select:focus {
+  border-color: #FFC400 !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.25) !important;
+}
+
+/* Textos de ayuda (help_text) */
+.form-row .help,
+p.help {
+  font-size: 12px !important;
+  color: var(--body-quiet-color) !important;
+  margin-top: 6px !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-row .help::before {
+  content: "ℹ";
+  color: #FFC400;
+  font-weight: 800;
   font-size: 13px;
 }
 
-.admin-footer-fitlife strong {
-  color: var(--admin-yellow);
+/* Errores de validación en campos */
+.errors input, .errors select, .errors textarea {
+  border-color: #DC3545 !important;
 }
 
+.errorlist {
+  background: rgba(220, 53, 69, 0.15) !important;
+  border-left: 3px solid #DC3545 !important;
+  padding: 8px 12px !important;
+  margin: 6px 0 !important;
+  border-radius: 4px;
+  list-style: none;
+}
+
+.errorlist li {
+  color: #FF6B6B !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+.errornote {
+  background: #3D181A !important;
+  border: 1px solid #DC3545 !important;
+  border-left: 5px solid #DC3545 !important;
+  color: #FFA8A8 !important;
+  padding: 14px 18px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  margin-bottom: 20px !important;
+}
+
+/* Inlines (Tabular / Stacked) */
+.inline-group {
+  background: var(--fitlife-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  margin-bottom: 24px !important;
+}
+
+.inline-group h2 {
+  background: var(--darker-bg) !important;
+  color: #FFFFFF !important;
+  border-left: 4px solid #FFC400;
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 18px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.inline-related table {
+  width: 100%;
+}
+
+.inline-related tr:hover {
+  background: var(--fitlife-surface-alt);
+}
+
+/* --------------------------------------------------------------------------
+   9. Barra de Guardado Fija (submit-row)
+   -------------------------------------------------------------------------- */
+.submit-row {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 1000 !important;
+  background: #141414 !important;
+  border: 1px solid var(--border-color) !important;
+  border-top: 2px solid #FFC400 !important;
+  border-radius: 8px !important;
+  padding: 14px 20px !important;
+  margin: 24px 0 0 0 !important;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.6) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.submit-row input[type="submit"] {
+  margin: 0 !important;
+}
+
+.submit-row input[name="_save"] {
+  background: #FFC400 !important;
+  color: #111111 !important;
+  font-weight: 900 !important;
+}
+
+.submit-row input[name="_addanother"],
+.submit-row input[name="_continue"],
+.submit-row input[name="_saveasnew"] {
+  background: transparent !important;
+  color: var(--body-fg) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.submit-row input[name="_addanother"]:hover,
+.submit-row input[name="_continue"]:hover,
+.submit-row input[name="_saveasnew"]:hover {
+  border-color: #FFC400 !important;
+  color: #FFC400 !important;
+  background: var(--fitlife-surface-alt) !important;
+}
+
+.submit-row a.deletelink {
+  margin-right: auto !important; /* Empuja eliminar a la izquierda */
+}
+
+/* --------------------------------------------------------------------------
+   10. Tarjetas de Advertencia en Eliminación (delete_confirmation)
+   -------------------------------------------------------------------------- */
+.delete-confirmation #content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.fitlife-delete-card {
+  background: #231214;
+  border: 2px solid #DC3545;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(220, 53, 69, 0.25);
+}
+
+.fitlife-delete-card h2 {
+  color: #FF6B6B !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fitlife-delete-card p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #F5F5F5;
+}
+
+.fitlife-delete-card ul {
+  background: #180D0E;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 6px;
+  padding: 16px 24px;
+  font-size: 13px;
+  color: #FFD2D2;
+}
+
+.fitlife-delete-card form div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.fitlife-delete-card form input[type="submit"] {
+  background: #DC3545 !important;
+  border-color: #DC3545 !important;
+  color: #FFFFFF !important;
+}
+
+.fitlife-delete-card form input[type="submit"]:hover {
+  background: #BD2130 !important;
+  box-shadow: 0 4px 14px rgba(220, 53, 69, 0.5) !important;
+}
+
+.fitlife-delete-card form a.cancel-link {
+  background: transparent !important;
+  color: var(--body-fg) !important;
+  border: 1px solid var(--border-color) !important;
+  text-decoration: none !important;
+}
+
+.fitlife-delete-card form a.cancel-link:hover {
+  border-color: #FFC400 !important;
+  color: #FFC400 !important;
+}
+
+/* --------------------------------------------------------------------------
+   11. Mensajes del Sistema (messagelist) con auto-fadeout
+   -------------------------------------------------------------------------- */
+ul.messagelist {
+  padding: 0;
+  margin: 0 0 20px 0;
+  list-style: none;
+}
+
+ul.messagelist li {
+  padding: 14px 20px !important;
+  margin-bottom: 10px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+ul.messagelist li.success {
+  background: var(--message-success-bg) !important;
+  border-left: 5px solid #28A745 !important;
+  color: #D4EDDA !important;
+}
+
+ul.messagelist li.warning {
+  background: var(--message-warning-bg) !important;
+  border-left: 5px solid #FFC107 !important;
+  color: #FFF3CD !important;
+}
+
+ul.messagelist li.error {
+  background: var(--message-error-bg) !important;
+  border-left: 5px solid #DC3545 !important;
+  color: #F8D7DA !important;
+}
+
+ul.messagelist li.info {
+  background: var(--message-info-bg) !important;
+  border-left: 5px solid #17A2B8 !important;
+  color: #D1ECF1 !important;
+}
+
+/* Botón cerrar mensaje manual */
+.fitlife-msg-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  opacity: 0.7;
+}
+
+.fitlife-msg-close:hover {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   12. Footer Institucional FitLife
+   -------------------------------------------------------------------------- */
+.admin-footer-fitlife {
+  text-align: center;
+  padding: 24px;
+  margin-top: 48px;
+  background: #111111;
+  border-top: 2px solid #FFC400;
+  color: #BBBBBB;
+  font-size: 13px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.admin-footer-fitlife strong {
+  color: #FFC400;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   13. Responsividad Móvil (pantallas táctiles >= 44px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .fitlife-metrics-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .fitlife-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .fitlife-metrics-container {
+    grid-template-columns: 1fr;
+  }
+  .fitlife-modules-column {
+    grid-template-columns: 1fr;
+  }
+  #header {
+    padding: 10px 14px !important;
+  }
+  #header #branding {
+    float: none;
+    margin-bottom: 8px;
+  }
+  #user-tools {
+    text-align: left;
+    padding-top: 0;
+  }
+  .button, input[type=submit], input[type=button], .submit-row input, a.button, a.deletelink {
+    min-height: 44px !important;
+    padding: 12px 18px !important;
+    font-size: 13px !important;
+  }
+  .submit-row {
+    flex-direction: column-reverse;
+    align-items: stretch !important;
+  }
+  .submit-row a.deletelink {
+    margin-right: 0 !important;
+    text-align: center;
+    justify-content: center;
+  }
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .actions select {
+    width: 100%;
+  }
+}

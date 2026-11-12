@@ -1,39 +1,54 @@
 {% extends "admin/change_list.html" %}
-{% load i18n %}
+{% load i18n admin_urls static admin_list %}
 
 {% block content %}
-<div class="fitlife-admin-model-header" style="background: #181818; border-left: 4px solid #FFC400; padding: 12px 18px; margin-bottom: 16px; border-radius: 4px;">
-  <span style="color: #FFC400; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Gestión FitLife · {{ cl.opts.verbose_name_plural|capfirst }}</span>
-  <p style="margin: 4px 0 0 0; color: #BBB; font-size: 13px;">
-    {% if cl.opts.model_name == 'user' %}
-      Administración integral de usuarios y asignación de roles (Administrador, Recepción, Socio).
-    {% elif cl.opts.model_name == 'memberprofile' %}
-      Ficha de socios, visualización del Pase QR individual, datos de contacto y validación de RUT.
-    {% elif cl.opts.model_name == 'plan' %}
-      Catálogo comercial de planes de entrenamiento, precios en pesos chilenos y lista de beneficios.
-    {% elif cl.opts.model_name == 'membership' %}
-      Control de estados de membresías (Activa, Vencida, Congelada), vigencias y acciones por lote.
-    {% elif cl.opts.model_name == 'payment' %}
-      Registro contable de transacciones, métodos de pago simulados/manuales y auditoría de recaudación.
-    {% elif cl.opts.model_name == 'accesslog' %}
-      Bitácora en tiempo real de entradas y salidas por escaneo QR con motivos de denegación.
-    {% elif cl.opts.model_name == 'facilitysetting' %}
-      Parámetros de capacidad máxima y umbrales porcentuales del semáforo de aforo.
-    {% elif cl.opts.model_name == 'classtype' %}
-      Disciplinas deportivas ofertadas, niveles de intensidad y duración de las sesiones.
-    {% elif cl.opts.model_name == 'classsession' %}
-      Programación de clases grupales, salas asignadas, cupos disponibles y listas de espera.
-    {% elif cl.opts.model_name == 'booking' %}
-      Historial de reservas de clases, asignación de cupos y registro de asistencia presencial.
-    {% elif cl.opts.model_name == 'contactmessage' %}
-      Bandeja de mensajes y solicitudes enviadas a través del formulario de contacto público.
-    {% elif cl.opts.model_name == 'notification' %}
-      Alertas y notificaciones internas enviadas a los socios sobre sus reservas y membresías.
-    {% else %}
-      Panel de administración de datos relacionales del sistema deportivo FitLife.
+<!-- Cabecera de Contexto de Negocio FitLife -->
+<div class="fitlife-admin-model-header" style="background: var(--fitlife-surface); border: 1px solid var(--border-color); border-left: 5px solid #FFC400; padding: 14px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+  <div>
+    <span style="color: #FFC400; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px;">
+      Gestión FitLife &middot; {{ cl.opts.verbose_name_plural|capfirst }}
+    </span>
+    <p style="margin: 4px 0 0 0; color: var(--body-quiet-color); font-size: 13px;">
+      {% if cl.opts.model_name == 'user' %}
+        Administración integral de cuentas de usuario, asignación de roles (Administrador, Recepción, Socio) y permisos operativos.
+      {% elif cl.opts.model_name == 'memberprofile' %}
+        Ficha técnica de socios, datos de contacto, RUT chileno verificado y visualización del Pase QR individual de acceso.
+      {% elif cl.opts.model_name == 'plan' %}
+        Catálogo comercial de planes de entrenamiento deportivo, tarifas en CLP, periodicidad y beneficios destacados.
+      {% elif cl.opts.model_name == 'membership' %}
+        Control de vigencia de membresías (Activas, Vencidas, Congeladas), fechas de caducidad y acciones operativas por lote.
+      {% elif cl.opts.model_name == 'payment' %}
+        Registro y auditoría contable de pagos, transacciones Webpay simuladas y pagos manuales en recepción.
+      {% elif cl.opts.model_name == 'accesslog' %}
+        Bitácora histórica de accesos QR al recinto deportivo. Registro inmutable para trazabilidad, auditoría y aforo.
+      {% elif cl.opts.model_name == 'facilitysetting' %}
+        Parámetros globales de capacidad máxima de la sede y umbrales de alerta del semáforo de aforo (Patrón Singleton).
+      {% elif cl.opts.model_name == 'classtype' %}
+        Catálogo de disciplinas y clases deportivas disponibles, niveles de exigencia física y duración en minutos.
+      {% elif cl.opts.model_name == 'classsession' %}
+        Programación horaria de clases presenciales, salas asignadas, instructores a cargo y monitoreo de cupos.
+      {% elif cl.opts.model_name == 'booking' %}
+        Control de inscripciones de socios a clases grupales, asignación de cupos y registro de asistencia presencial.
+      {% elif cl.opts.model_name == 'contactmessage' %}
+        Bandeja de entrada de consultas y solicitudes remitidas a través del formulario de contacto del sitio web.
+      {% elif cl.opts.model_name == 'notification' %}
+        Historial de notificaciones y alertas automáticas emitidas a los socios (promociones de espera, membresías, etc.).
+      {% else %}
+        Panel de administración de datos y configuración del sistema deportivo FitLife.
+      {% endif %}
+    </p>
+  </div>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <span style="background: rgba(255, 196, 0, 0.12); color: #FFC400; border: 1px solid rgba(255, 196, 0, 0.35); font-size: 12px; font-weight: 800; padding: 6px 14px; border-radius: 20px; white-space: nowrap;">
+      {{ cl.result_count }} {% if cl.result_count == 1 %}registro{% else %}registros{% endif %}
+    </span>
+    {% if cl.has_filters %}
+      <a href="?" style="font-size: 12px; color: var(--body-quiet-color); text-decoration: underline; padding: 6px 10px;" title="Restablecer todos los filtros">
+        Limpiar filtros
+      </a>
     {% endif %}
-  </p>
+  </div>
 </div>
+
 {{ block.super }}
 {% endblock %}
-

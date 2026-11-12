@@ -1,0 +1,36 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+  <li><a href="{% url 'admin:index' %}">Inicio</a></li>
+  <li aria-current="page">Sesión Finalizada</li>
+</ol>
+{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 280px); display: flex; align-items: center; justify-content: center; padding: 20px;">
+  <div style="background: var(--fitlife-surface); border: 1px solid var(--border-color); border-top: 3px solid #FFC400; border-radius: 10px; padding: 32px 28px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+    <div style="width: 54px; height: 54px; border-radius: 50%; background: rgba(255, 196, 0, 0.12); color: #FFC400; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 24px;">
+      🔒
+    </div>
+    <h2 style="font-size: 20px; font-weight: 900; margin-top: 0; color: var(--body-loud-color);">
+      Sesión Cerrada con Éxito
+    </h2>
+    <p style="color: var(--body-quiet-color); font-size: 13px; line-height: 1.5; margin-bottom: 24px;">
+      Has cerrado tu sesión del Panel de Administración de FitLife de manera segura. Para volver a operar en el sistema, autentícate nuevamente.
+    </p>
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a href="{% url 'admin:login' %}" class="button">
+        Ingresar al Panel
+      </a>
+      <a href="{% url 'home' %}" class="button button-outline">
+        Ir al Portal Público
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,44 @@
+{% load i18n %}
+<div class="actions">
+  {% block actions %}
+    {% block actions-form %}
+      <label>Acción:
+        <select name="action" required>
+          <option value="" selected>Seleccione una acción...</option>
+          {% for choice in action_form.fields.action.choices %}
+            {% if choice.0 %}
+              <option value="{{ choice.0 }}">
+                {% if choice.0 == 'delete_selected' %}
+                  ⚠️ Eliminar elementos seleccionados
+                {% else %}
+                  {{ choice.1 }}
+                {% endif %}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </label>
+      {% for field in action_form %}
+        {% if field.name != 'action' %}
+          {{ field }}
+        {% endif %}
+      {% endfor %}
+    {% endblock %}
+    {% block actions-submit %}
+      <button type="submit" class="button" name="index" value="{{ action_index|default:0 }}">Ejecutar</button>
+    {% endblock %}
+    {% block actions-counter %}
+    {% if actions_selection_counter %}
+        <span class="action-counter" data-actions-icnt="{{ cl.result_list|length }}" aria-live="polite" aria-atomic="true">0 de {{ cl.result_list|length }} seleccionados</span>
+        {% if cl.result_count != cl.result_list|length %}
+        <span class="all hidden" style="font-size: 12px; color: #FFC400; margin-left: 8px;">{{ cl.result_count }} elementos en total seleccionados</span>
+        <span class="question hidden" style="margin-left: 8px;">
+            <a role="button" href="#" style="color: #FFC400; font-weight: 700; text-decoration: underline;">Seleccionar los {{ cl.result_count }} {{ cl.opts.verbose_name_plural }}</a>
+        </span>
+        <span class="clear hidden" style="margin-left: 8px;"><a role="button" href="#" style="color: #A0A0A0; text-decoration: underline;">Limpiar selección</a></span>
+        {% endif %}
+    {% endif %}
+    {% endblock %}
+  {% endblock %}
+</div>
+
