@@ -50,21 +50,8 @@ class Command(BaseCommand):
         reception_group, _ = Group.objects.get_or_create(name='Recepcionistas')
         member_group, _ = Group.objects.get_or_create(name='Socios')
 
-        # Asignar permisos operativos al personal de Recepción
-        reception_perms_codenames = [
-            'view_user', 'view_memberprofile',
-            'view_membership', 'change_membership',
-            'view_payment', 'add_payment',
-            'view_accesslog',
-            'view_classsession', 'view_classtype',
-            'view_booking', 'change_booking',
-            'view_facilitysetting',
-        ]
+        # Grupo Recepcionistas: sin permisos de Django Admin (Recepción usa su propio panel en /recepcion/)
         reception_group.permissions.clear()
-        for codename in reception_perms_codenames:
-            p = Permission.objects.filter(codename=codename).first()
-            if p:
-                reception_group.permissions.add(p)
 
         # Asignar todos los permisos del dominio al grupo Administradores
         admin_group.permissions.clear()
@@ -176,25 +163,32 @@ class Command(BaseCommand):
         admin_user.save()
         admin_user.groups.add(admin_group)
 
+        reception_username = env_config('DEMO_RECEPTION_USER', default='recepcion')
+        reception_email = env_config('DEMO_RECEPTION_EMAIL', default='recepcion@fitlife.cl')
+        reception_password = env_config('DEMO_RECEPTION_PASSWORD', default='RecepcionFitLife2026!')
+
         reception_user, created_rec = User.objects.get_or_create(
-            username='recepcion',
+            username=reception_username,
             defaults={
-                'email': 'recepcion@fitlife.cl',
+                'email': reception_email,
                 'first_name': 'Camila',
                 'last_name': 'Rojas',
                 'role': UserRole.RECEPTION,
-                'is_staff': True,
+                'is_staff': False,
                 'is_superuser': False,
                 'is_active': True,
             }
         )
         if created_rec or reset_passwords:
-            reception_user.set_password('RecepcionFitLife2026!')
+            reception_user.set_password(reception_password)
+        reception_user.email = reception_email
         reception_user.role = UserRole.RECEPTION
-        reception_user.is_staff = True
+        reception_user.is_staff = False
+        reception_user.is_superuser = False
+        reception_user.is_active = True
         reception_user.save()
         reception_user.groups.add(reception_group)
-        self.stdout.write("✓ Usuarios 'admin' y 'recepcion' verificados.")
+        self.stdout.write("✓ Usuarios 'admin' y 'recepcion' verificados (Recepción: is_staff=False).")
 
         # 5. 8 Socios de prueba (ACTIVE, EXPIRED, FROZEN)
         demo_members_data = [

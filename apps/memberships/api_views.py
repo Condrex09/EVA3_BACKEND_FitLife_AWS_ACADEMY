@@ -80,3 +80,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [IsReceptionRole()]
         return [IsAdminRole()]
+
+    def perform_create(self, serializer):
+        serializer.save(registered_by=self.request.user)
