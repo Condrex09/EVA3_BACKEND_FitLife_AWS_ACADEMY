@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Clases del Día - Recepción FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2.5rem 1.25rem 4rem 1.25rem;">
+
+  <!-- Cabecera -->
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--brand-yellow); padding-bottom: 1.25rem;">
+    <div>
+      <a href="{% url 'reception-home' %}" style="color: var(--brand-yellow); text-decoration: none; font-size: 0.85rem; font-weight: 700;">
+        &larr; Volver al Panel de Recepción
+      </a>
+      <h1 class="section-title" style="margin: 0.5rem 0 0 0; font-size: 1.85rem;">Clases Grupales de Hoy</h1>
+      <p style="color: var(--brand-text-muted); margin: 0.25rem 0 0 0; font-size: 0.95rem;">
+        Control de asistencia presencial, monitoreo de cupos y reservas de socios en mostrador.
+      </p>
+    </div>
+    <div style="text-align: right;">
+      <span style="display: block; font-size: 0.85rem; color: var(--brand-text-muted);">Programación de</span>
+      <strong style="color: var(--brand-yellow); font-size: 1.1rem;">{{ today|date:"l, d \d\e F Y"|capfirst }}</strong>
+    </div>
+  </div>
+
+  {% if not sessions_data %}
+    <div class="form-card" style="padding: 2.5rem; text-align: center;">
+      <div style="font-size: 2.5rem; color: var(--brand-text-muted); margin-bottom: 1rem;">
+        <i class="fa-solid fa-calendar-xmark"></i>
+      </div>
+      <h3 style="color: #fff; margin-bottom: 0.5rem;">No hay clases programadas para hoy</h3>
+      <p style="color: var(--brand-text-muted); font-size: 0.9rem; margin: 0;">
+        Las sesiones se crean desde el panel administrativo.
+      </p>
+    </div>
+  {% else %}
+
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      {% for item in sessions_data %}
+        {% with s=item.session %}
+        <div class="form-card" style="padding: 1.75rem; border-left: 5px solid {% if item.confirmed_count >= s.capacity %}#dc3545{% elif item.confirmed_count >= 15 %}#ffc107{% else %}#28a745{% endif %};">
+          
+          <!-- Encabezado de la Sesión -->
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <h2 style="color: #fff; font-size: 1.4rem; font-weight: 900; margin: 0;">
+                  {{ s.class_type.name }}
+                </h2>
+                <span style="background: rgba(255, 196, 0, 0.15); color: var(--brand-yellow); font-weight: 800; font-size: 0.8rem; padding: 3px 10px; border-radius: 12px;">
+                  {{ s.start_datetime|date:"H:i" }} - {{ s.end_datetime|date:"H:i" }} hrs
+                </span>
+              </div>
+              <div style="color: var(--brand-text-muted); font-size: 0.85rem; margin-top: 0.35rem;">
+                <i class="fa-solid fa-chalkboard-user"></i> Instructor: <strong style="color: #fff;">{{ s.instructor_name }}</strong> &middot; 
+                <i class="fa-solid fa-door-open"></i> Sala: <strong style="color: #fff;">{{ s.room }}</strong> &middot;
+                <i class="fa-solid fa-stopwatch"></i> Duración: {{ s.class_type.duration_minutes }} min
+              </div>
+            </div>
+
+            <!-- Badges de Cupos -->
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <span style="background: {% if item.confirmed_count >= s.capacity %}#dc3545{% elif item.confirmed_count >= 15 %}#ffc107{% else %}#28a745{% endif %}; color: {% if item.confirmed_count >= 15 and item.confirmed_count < s.capacity %}#000{% else %}#fff{% endif %}; font-weight: 900; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px;">
+                {{ item.confirmed_count }} / {{ s.capacity }} cupos ocupados
+              </span>
+              {% if item.waitlist_count > 0 %}
+                <span style="background: #17a2b8; color: #fff; font-weight: 800; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px;">
+                  +{{ item.waitlist_count }} en espera
+                </span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Formulario: Inscribir Socio a esta Clase en Mostrador -->
+          <div style="background: #151515; border: 1px solid #333; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+            <strong style="color: var(--brand-yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 0.5rem;">
+              <i class="fa-solid fa-user-plus"></i> Reservar cupo para un socio en mostrador
+            </strong>
+            <form method="post" action="{% url 'reception-book-for-member' session_id=s.id %}" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              {% csrf_token %}
+              <select name="member_id" required class="form-control" style="flex: 1; min-width: 260px; background: #1c1c1c; color: #fff; font-size: 0.9rem;">
+                <option value="">-- Selecciona un socio activo --</option>
+                {% for mem in active_members %}
+                  <option value="{{ mem.id }}">
+                    {{ mem.get_full_name|default:mem.username }} (RUT: {{ mem.profile.formatted_rut|default:"Sin RUT" }})
+                  </option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-yellow btn-sm" style="font-weight: 800; white-space: nowrap;">
+                <i class="fa-solid fa-calendar-check"></i> Inscribir a la clase
+              </button>
+            </form>
+          </div>
+
+          <!-- Lista de Socios Confirmados con Asistencia -->
+          <div style="margin-bottom: 1.5rem;">
+            <h4 style="color: #fff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
+              Socios Inscritos ({{ item.confirmed_bookings|length }})
+            </h4>
+
+            {% if item.confirmed_bookings %}
+              <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                  <thead>
+                    <tr style="background: #151515; border-bottom: 2px solid #333; text-align: left; color: var(--brand-text-muted);">
+                      <th style="padding: 8px 12px;">Socio</th>
+                      <th style="padding: 8px 12px;">RUT</th>
+                      <th style="padding: 8px 12px;">Estado Actual</th>
+                      <th style="padding: 8px 12px; text-align: right;">Acciones de Asistencia</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for b in item.confirmed_bookings %}
+                      <tr style="border-bottom: 1px solid #222;">
+                        <td style="padding: 10px 12px; font-weight: 700; color: #fff;">
+                          {{ b.member.get_full_name|default:b.member.username }}
+                        </td>
+                        <td style="padding: 10px 12px; color: var(--brand-text-muted);">
+                          {{ b.member.profile.formatted_rut|default:"-" }}
+                        </td>
+                        <td style="padding: 10px 12px;">
+                          {% if b.status == 'ATTENDED' %}
+                            <span style="background: #198754; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 800; font-size: 0.75rem;">
+                              <i class="fa-solid fa-check"></i> Asistió
+                            </span>
+                          {% elif b.status == 'NO_SHOW' %}
+                            <span style="background: #6c757d; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 800; font-size: 0.75rem;">
+                              <i class="fa-solid fa-xmark"></i> No asistió
+                            </span>
+                          {% else %}
+                            <span style="background: #0d6efd; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 800; font-size: 0.75rem;">
+                              Confirmada
+                            </span>
+                          {% endif %}
+                        </td>
+                        <td style="padding: 10px 12px; text-align: right;">
+                          <div style="display: inline-flex; gap: 0.4rem; align-items: center;">
+                            <!-- Botón Asistió -->
+                            <form method="post" action="{% url 'reception-update-attendance' booking_id=b.id %}" style="display: inline;">
+                              {% csrf_token %}
+                              <input type="hidden" name="status" value="ATTENDED">
+                              <button type="submit" class="btn btn-sm" style="background: #198754; color: #fff; font-size: 0.75rem; padding: 3px 8px;" title="Marcar presente">
+                                <i class="fa-solid fa-check"></i> Asistió
+                              </button>
+                            </form>
+
+                            <!-- Botón No Asistió -->
+                            <form method="post" action="{% url 'reception-update-attendance' booking_id=b.id %}" style="display: inline;">
+                              {% csrf_token %}
+                              <input type="hidden" name="status" value="NO_SHOW">
+                              <button type="submit" class="btn btn-sm" style="background: #6c757d; color: #fff; font-size: 0.75rem; padding: 3px 8px;" title="Marcar ausente">
+                                <i class="fa-solid fa-xmark"></i> No asistió
+                              </button>
+                            </form>
+
+                            <!-- Botón Cancelar Reserva -->
+                            <form method="post" action="{% url 'reception-cancel-booking' booking_id=b.id %}" style="display: inline;" onsubmit="return confirm('¿Seguro que deseas cancelar la reserva de este socio?');">
+                              {% csrf_token %}
+                              <button type="submit" class="btn btn-sm" style="background: #dc3545; color: #fff; font-size: 0.75rem; padding: 3px 8px;" title="Cancelar cupo">
+                                <i class="fa-solid fa-trash-can"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin: 0;">No hay socios inscritos en esta sesión aún.</p>
+            {% endif %}
+          </div>
+
+          <!-- Lista de Espera de la Sesión -->
+          {% if item.waitlist_bookings %}
+            <div style="border-top: 1px solid #333; padding-top: 1rem;">
+              <h4 style="color: #17a2b8; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-users-line"></i> Lista de Espera ({{ item.waitlist_bookings|length }})
+              </h4>
+              <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                  <thead>
+                    <tr style="background: #151515; text-align: left; color: var(--brand-text-muted);">
+                      <th style="padding: 6px 12px; width: 60px;">Turno</th>
+                      <th style="padding: 6px 12px;">Socio</th>
+                      <th style="padding: 6px 12px;">RUT</th>
+                      <th style="padding: 6px 12px; text-align: right;">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for w in item.waitlist_bookings %}
+                      <tr style="border-bottom: 1px solid #222;">
+                        <td style="padding: 8px 12px; font-weight: 900; color: #17a2b8;">
+                          #{{ w.waitlist_position }}
+                        </td>
+                        <td style="padding: 8px 12px; color: #fff; font-weight: 600;">
+                          {{ w.member.get_full_name|default:w.member.username }}
+                        </td>
+                        <td style="padding: 8px 12px; color: var(--brand-text-muted);">
+                          {{ w.member.profile.formatted_rut|default:"-" }}
+                        </td>
+                        <td style="padding: 8px 12px; text-align: right;">
+                          <form method="post" action="{% url 'reception-cancel-booking' booking_id=w.id %}" style="display: inline;" onsubmit="return confirm('¿Quitar a este socio de la lista de espera?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-dark btn-sm" style="font-size: 0.75rem; padding: 2px 8px; color: #dc3545;">
+                              Quitar
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          {% endif %}
+
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

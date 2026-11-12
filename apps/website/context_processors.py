@@ -1,3 +1,4 @@
+from django.conf import settings
 from decouple import config
 from .models import Notification
 
@@ -6,17 +7,21 @@ def site_context(request):
     Context processor global que inyecta:
     - Footer obligatorio institucional
     - Contador de notificaciones no leídas
-    - Credenciales demo del admin y bandera SHOW_DEMO_CREDENTIALS
+    - Credenciales demo del admin y recepcionista con bandera SHOW_DEMO_CREDENTIALS
     """
     footer_text = "Desarrollado por Benjamin Gomez · Sección AP-N4-C1 · INACAP · EVA 3 Desarrollo Backend"
     unread_notifications = 0
     if request.user.is_authenticated and getattr(request.user, 'role', None) == 'MEMBER':
         unread_notifications = Notification.objects.filter(member=request.user, is_read=False).count()
 
-    show_demo_credentials = config('SHOW_DEMO_CREDENTIALS', default=True, cast=bool)
+    show_demo_credentials = getattr(settings, 'SHOW_DEMO_CREDENTIALS', config('SHOW_DEMO_CREDENTIALS', default=True, cast=bool))
     demo_admin_user = config('DEMO_ADMIN_USER', default='admin')
     demo_admin_email = config('DEMO_ADMIN_EMAIL', default='admin@fitlife.cl')
     demo_admin_password = config('DEMO_ADMIN_PASSWORD', default='Admin#FitLife2026')
+
+    demo_reception_user = config('DEMO_RECEPTION_USER', default='recepcion')
+    demo_reception_email = config('DEMO_RECEPTION_EMAIL', default='recepcion@fitlife.cl')
+    demo_reception_password = config('DEMO_RECEPTION_PASSWORD', default='RecepcionFitLife2026!')
 
     return {
         'FOOTER_TEXT': footer_text,
@@ -26,4 +31,7 @@ def site_context(request):
         'DEMO_ADMIN_USER': demo_admin_user,
         'DEMO_ADMIN_EMAIL': demo_admin_email,
         'DEMO_ADMIN_PASSWORD': demo_admin_password,
+        'DEMO_RECEPTION_USER': demo_reception_user,
+        'DEMO_RECEPTION_EMAIL': demo_reception_email,
+        'DEMO_RECEPTION_PASSWORD': demo_reception_password,
     }

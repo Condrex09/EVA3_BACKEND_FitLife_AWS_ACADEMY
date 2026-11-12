@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from .models import User, MemberProfile, UserRole
 
@@ -82,7 +83,7 @@ class MemberProfileAdmin(admin.ModelAdmin):
         mem = instance.user.memberships.filter(status='ACTIVE').first()
         if mem:
             return format_html('<span style="color: #198754; font-weight: bold;">{} (hasta {})</span>', mem.plan.name, mem.end_date.strftime('%d/%m/%Y'))
-        return format_html('<span style="color: #dc3545;">Sin membresía activa</span>')
+        return mark_safe('<span style="color: #dc3545;">Sin membresía activa</span>')
     active_membership_summary.short_description = "Membresía Vigente"
 
     def active_membership_link(self, instance):

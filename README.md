@@ -90,17 +90,20 @@ python manage.py seed_demo
 ```
 Dicho comando crea los siguientes perfiles de usuario listos para probar:
 
-| Rol | Usuario / Correo | Contraseña | Propósito en la Defensa |
+| Rol | Usuario / Correo | Contraseña | Capacidades y Alcance Operativo |
 |---|---|---|---|
-| **Administrador** | `admin` / `admin@fitlife.cl` | `Admin#FitLife2026` | Acceso completo al Django Admin (`/admin/`), métricas vivas, gestión de planes y sesiones. |
-| **Recepción** | `recepcion` / `recepcion@fitlife.cl` | `RecepcionFitLife2026!` | Operador de torniquete QR (`/recepcion/acceso/`), monitor de aforo, congelar/descongelar y pago manual. |
-| **Socio ACTIVO** | `carlos.silva` | `SocioFitLife2026!` | Membresía activa (FitLife Black). Valida **ACCESO PERMITIDO**. |
-| **Socio VENCIDO** | `maria.gonzalez` | `SocioFitLife2026!` | Membresía vencida. Simula y prueba **ACCESO DENEGADO (EXPIRED)**. |
-| **Socio CONGELADO** | `juan.perez` | `SocioFitLife2026!` | Membresía pausada. Simula y prueba **ACCESO DENEGADO (FROZEN)**. |
-| **Socio LISTA ESPERA** | `valentina.munoz` | `SocioFitLife2026!` | Inscrita en lista de espera de Spinning. Permite demostrar la **promoción automática**. |
+| **Administrador** | `admin` / `admin@fitlife.cl` | `Admin#FitLife2026` | `is_staff=True`, `role='ADMIN'`. Acceso total al Django Admin (`/admin/`), métricas financieras/comerciales, CRUD completo de planes, disciplinas, sesiones, usuarios y configuración singleton de sede. |
+| **Recepción** | `recepcion` / `recepcion@fitlife.cl` | `RecepcionFitLife2026!` | `is_staff=False`, `role='RECEPTION'`. Interfaz propia de mostrador (`/recepcion/`), control de acceso QR (USB/cámara), aforo en tiempo real, búsqueda de socios, cobros/renovaciones (monto fijo según plan), inscripción atómica presencial en 1 paso, asistencia a clases de hoy y reservas respetando cupos. **Sin acceso a Django Admin ni eliminación de datos.** |
+| **Socio ACTIVO** | `carlos.silva` | `SocioFitLife2026!` | `role='MEMBER'`. Membresía activa (FitLife Black), Pase QR dinámico. Valida **ACCESO PERMITIDO**. |
+| **Socio VENCIDO** | `maria.gonzalez` | `SocioFitLife2026!` | `role='MEMBER'`. Membresía expirada. Simula y prueba **ACCESO DENEGADO (EXPIRED)**. |
+| **Socio CONGELADO** | `juan.perez` | `SocioFitLife2026!` | `role='MEMBER'`. Membresía pausada. Simula y prueba **ACCESO DENEGADO (FROZEN)**. |
+| **Socio LISTA ESPERA** | `valentina.munoz` | `SocioFitLife2026!` | `role='MEMBER'`. Inscrita en lista de espera de Spinning. Demuestra **promoción automática**. |
 
-> **Tarjeta Demo en el Login (`SHOW_DEMO_CREDENTIALS`):**  
-> Cuando `SHOW_DEMO_CREDENTIALS=True` en `.env`, aparece una tarjeta debajo del formulario de login con un botón **"Autocompletar"** para rellenar usuario y contraseña automáticamente. En despliegues públicos fuera de la defensa evaluativa, debe configurarse en `False`.
+> **Tarjetas Demo en el Login (`SHOW_DEMO_CREDENTIALS`):**  
+> Cuando `SHOW_DEMO_CREDENTIALS=True` en `.env` (o en `settings.py`), aparecen dos tarjetas independientes debajo del formulario de login:
+> 1. **Cuenta de Administrador (demo):** botón "Autocompletar" rellena `admin` / `Admin#FitLife2026`.
+> 2. **Cuenta de Recepcionista (demo):** botón "Autocompletar" rellena `recepcion` / `RecepcionFitLife2026!`.  
+> Ambos autocompletan sus campos respectivos sin enviar el formulario automáticamente y se ocultan completamente al configurar `SHOW_DEMO_CREDENTIALS=False`.
 
 ---
 
