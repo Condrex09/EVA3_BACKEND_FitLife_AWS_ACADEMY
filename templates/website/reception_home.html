@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Panel de Mostrador - Recepción FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2.5rem 1.25rem 4rem 1.25rem;">
+
+  <!-- Cabecera de Recepción -->
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--brand-yellow); padding-bottom: 1.25rem;">
+    <div>
+      <span class="section-tag" style="margin-bottom: 0.25rem;">Mesa de Entrada &middot; Sede Central</span>
+      <h1 class="section-title" style="margin: 0; font-size: 2rem;">Panel de Recepción</h1>
+      <p style="color: var(--brand-text-muted); margin: 0.25rem 0 0 0; font-size: 0.95rem;">
+        Operaciones de mostrador: control de acceso, atención a socios, inscripciones y control de clases.
+      </p>
+    </div>
+    <div style="text-align: right;">
+      <span style="display: block; font-size: 0.85rem; color: var(--brand-text-muted);">Fecha operativa</span>
+      <strong style="font-size: 1.1rem; color: var(--brand-yellow);">{{ today|date:"l, d \d\e F Y"|capfirst }}</strong>
+    </div>
+  </div>
+
+  <!-- 1. Tarjetas de Acceso Rápido (Botones Grandes de Mostrador) -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+    
+    <!-- Escanear Acceso -->
+    <a href="{% url 'reception-access' %}" class="form-card" style="text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem; border-left: 5px solid var(--brand-yellow); transition: transform 0.2s ease, border-color 0.2s ease;">
+      <div>
+        <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(255, 196, 0, 0.15); color: var(--brand-yellow); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+          <i class="fa-solid fa-qrcode"></i>
+        </div>
+        <h3 style="color: #fff; font-size: 1.2rem; margin: 0 0 0.25rem 0; font-weight: 800;">Escanear Acceso</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin: 0;">Lector QR USB o cámara en vivo.</p>
+      </div>
+      <div style="margin-top: 1.25rem; font-size: 0.85rem; font-weight: 700; color: var(--brand-yellow);">
+        Ingresar al lector &rarr;
+      </div>
+    </a>
+
+    <!-- Aforo Actual -->
+    <a href="{% url 'dashboard-aforo' %}" class="form-card" style="text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem; border-left: 5px solid {{ aforo_data.color_hex }}; transition: transform 0.2s ease;">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+          <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(23, 162, 184, 0.15); color: {{ aforo_data.color_hex }}; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            <i class="fa-solid fa-chart-pie"></i>
+          </div>
+          <span style="background: {{ aforo_data.color_hex }}; color: #000; font-weight: 900; font-size: 0.75rem; padding: 3px 8px; border-radius: 12px;">
+            {{ aforo_data.occupancy_pct }}%
+          </span>
+        </div>
+        <h3 style="color: #fff; font-size: 1.2rem; margin: 0 0 0.25rem 0; font-weight: 800;">Aforo en Sede</h3>
+        <p style="color: {{ aforo_data.color_hex }}; font-size: 1.35rem; font-weight: 900; margin: 0.25rem 0;">
+          {{ aforo_data.current_occupancy }} / {{ aforo_data.max_capacity }}
+        </p>
+        <p style="color: var(--brand-text-muted); font-size: 0.8rem; margin: 0;">personas dentro de la sede</p>
+      </div>
+      <div style="margin-top: 1rem; font-size: 0.85rem; font-weight: 700; color: {{ aforo_data.color_hex }};">
+        Ver semáforo &rarr;
+      </div>
+    </a>
+
+    <!-- Buscar Socio -->
+    <a href="{% url 'reception-members' %}" class="form-card" style="text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem; border-left: 5px solid #0d6efd; transition: transform 0.2s ease;">
+      <div>
+        <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(13, 110, 253, 0.15); color: #0d6efd; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+          <i class="fa-solid fa-user-check"></i>
+        </div>
+        <h3 style="color: #fff; font-size: 1.2rem; margin: 0 0 0.25rem 0; font-weight: 800;">Buscar Socio</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin: 0;">Ficha, historial, cobros y congelamientos.</p>
+      </div>
+      <div style="margin-top: 1.25rem; font-size: 0.85rem; font-weight: 700; color: #0d6efd;">
+        Abrir buscador &rarr;
+      </div>
+    </a>
+
+    <!-- Inscribir Socio -->
+    <a href="{% url 'reception-enroll' %}" class="form-card" style="text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem; border-left: 5px solid #28a745; transition: transform 0.2s ease;">
+      <div>
+        <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(40, 167, 69, 0.15); color: #28a745; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <h3 style="color: #fff; font-size: 1.2rem; margin: 0 0 0.25rem 0; font-weight: 800;">Inscribir Socio</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin: 0;">Inscripción en 1 paso con pago y pase QR.</p>
+      </div>
+      <div style="margin-top: 1.25rem; font-size: 0.85rem; font-weight: 700; color: #28a745;">
+        Nueva ficha &rarr;
+      </div>
+    </a>
+
+    <!-- Clases de Hoy -->
+    <a href="{% url 'reception-classes' %}" class="form-card" style="text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem; border-left: 5px solid #ffc107; transition: transform 0.2s ease;">
+      <div>
+        <div style="width: 46px; height: 46px; border-radius: 10px; background: rgba(255, 193, 7, 0.15); color: #ffc107; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem;">
+          <i class="fa-solid fa-calendar-day"></i>
+        </div>
+        <h3 style="color: #fff; font-size: 1.2rem; margin: 0 0 0.25rem 0; font-weight: 800;">Clases de Hoy</h3>
+        <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin: 0;">Asistencia, cupos y reservas presenciales.</p>
+      </div>
+      <div style="margin-top: 1.25rem; font-size: 0.85rem; font-weight: 700; color: #ffc107;">
+        Ver programación &rarr;
+      </div>
+    </a>
+
+  </div>
+
+  <!-- 2. Alertas del Día -->
+  <div style="margin-top: 1rem;">
+    <h2 style="font-size: 1.35rem; color: #fff; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+      <i class="fa-solid fa-bell" style="color: var(--brand-yellow);"></i> Alertas Operativas de Hoy
+    </h2>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+
+      <!-- Alerta 1: Membresías por vencer (< 7 días) -->
+      <div class="form-card" style="padding: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <strong style="color: #ffc107; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-clock"></i> Vencen en próximos 7 días
+          </strong>
+          <span style="background: rgba(255, 193, 7, 0.15); color: #ffc107; font-weight: 800; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px;">
+            {{ expiring_soon|length }} socios
+          </span>
+        </div>
+
+        {% if expiring_soon %}
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% for m in expiring_soon %}
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.75rem; background: #161616; border-radius: 6px; border-left: 3px solid #ffc107;">
+                <div>
+                  <a href="{% url 'reception-member-detail' user_id=m.member.id %}" style="color: #fff; font-weight: 700; text-decoration: none; font-size: 0.9rem;">
+                    {{ m.member.get_full_name|default:m.member.username }}
+                  </a>
+                  <div style="font-size: 0.75rem; color: var(--brand-text-muted);">
+                    {{ m.plan.name }} &middot; Vence: <strong style="color: #ffc107;">{{ m.end_date|date:"d/m/Y" }}</strong> ({{ m.days_remaining }} días)
+                  </div>
+                </div>
+                <a href="{% url 'reception-member-detail' user_id=m.member.id %}" class="btn btn-yellow btn-sm" style="font-size: 0.75rem; padding: 4px 8px;" title="Renovar">
+                  Renovar
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin: 0;">No hay membresías por caducar en los próximos 7 días.</p>
+        {% endif %}
+      </div>
+
+      <!-- Alerta 2: Membresías vencidas hoy -->
+      <div class="form-card" style="padding: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <strong style="color: #dc3545; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Vencidas Hoy
+          </strong>
+          <span style="background: rgba(220, 53, 69, 0.15); color: #dc3545; font-weight: 800; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px;">
+            {{ expired_today|length }}
+          </span>
+        </div>
+
+        {% if expired_today %}
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% for m in expired_today %}
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.75rem; background: #161616; border-radius: 6px; border-left: 3px solid #dc3545;">
+                <div>
+                  <a href="{% url 'reception-member-detail' user_id=m.member.id %}" style="color: #fff; font-weight: 700; text-decoration: none; font-size: 0.9rem;">
+                    {{ m.member.get_full_name|default:m.member.username }}
+                  </a>
+                  <div style="font-size: 0.75rem; color: #dc3545;">
+                    Venció hoy &middot; {{ m.plan.name }}
+                  </div>
+                </div>
+                <a href="{% url 'reception-member-detail' user_id=m.member.id %}" class="btn btn-yellow btn-sm" style="font-size: 0.75rem; padding: 4px 8px;">
+                  Cobrar
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin: 0;">No se registran membresías vencidas durante el día de hoy.</p>
+        {% endif %}
+      </div>
+
+      <!-- Alerta 3: Sesiones con Lista de Espera -->
+      <div class="form-card" style="padding: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <strong style="color: #17a2b8; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-users-line"></i> Clases con Lista de Espera
+          </strong>
+          <span style="background: rgba(23, 162, 184, 0.15); color: #17a2b8; font-weight: 800; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px;">
+            {{ waitlist_sessions|length }} clases
+          </span>
+        </div>
+
+        {% if waitlist_sessions %}
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% for s in waitlist_sessions %}
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.75rem; background: #161616; border-radius: 6px; border-left: 3px solid #17a2b8;">
+                <div>
+                  <strong style="color: #fff; font-size: 0.9rem;">{{ s.class_type.name }}</strong>
+                  <div style="font-size: 0.75rem; color: var(--brand-text-muted);">
+                    {{ s.start_datetime|date:"H:i" }} hrs &middot; {{ s.room }} &middot; <span style="color: #17a2b8;">{{ s.waitlist_count }} en espera</span>
+                  </div>
+                </div>
+                <a href="{% url 'reception-classes' %}" class="btn btn-outline-yellow btn-sm" style="font-size: 0.75rem; padding: 4px 8px;">
+                  Ver clase
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="color: var(--brand-text-muted); font-size: 0.85rem; margin: 0;">Todas las clases de hoy tienen cupos disponibles sin lista de espera activa.</p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

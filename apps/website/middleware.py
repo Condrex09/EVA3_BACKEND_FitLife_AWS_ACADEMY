@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from django.conf import settings
+from django.contrib import messages
 
 class DynamicCSRFTrustedOriginMiddleware:
     """
@@ -21,6 +22,28 @@ class DynamicCSRFTrustedOriginMiddleware:
                 settings.CSRF_TRUSTED_ORIGINS.append(origin)
             if origin_port not in settings.CSRF_TRUSTED_ORIGINS:
                 settings.CSRF_TRUSTED_ORIGINS.append(origin_port)
+
+        return self.get_response(request)
+
+
+class AdminAccessRestrictionMiddleware:
+    """
+    Bloquea el acceso a /admin/ para usuarios autenticados sin permisos de staff
+    (como personal de recepción o socios), redirigiéndolos de manera
+    amable a su panel con el mensaje: 'El panel de administración es solo para administradores'.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.path.startswith('/admin/'):
+            # Solo interceptar usuarios autenticados que no sean staff
+            if hasattr(request, 'user') and request.user.is_authenticated and not request.user.is_staff:
+                messages.warning(request, "El panel de administración es solo para administradores.")
+                if getattr(request.user, 'role', None) == 'RECEPTION':
+                    return redirect('reception-home')
+                return redirect('profile')
 
         return self.get_response(request)
 

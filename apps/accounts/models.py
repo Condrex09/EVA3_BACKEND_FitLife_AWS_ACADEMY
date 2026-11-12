@@ -41,7 +41,7 @@ class User(AbstractUser):
 
     @property
     def is_reception(self) -> bool:
-        return self.role in [UserRole.RECEPTION, UserRole.ADMIN] or self.is_staff
+        return self.role in [UserRole.RECEPTION, UserRole.ADMIN]
 
     @property
     def is_member(self) -> bool:

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Inscribir Nuevo Socio - Recepción FitLife{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 2.5rem 1.25rem 4rem 1.25rem; max-width: 860px;">
+
+  <!-- Cabecera -->
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--brand-yellow); padding-bottom: 1.25rem;">
+    <div>
+      <a href="{% url 'reception-home' %}" style="color: var(--brand-yellow); text-decoration: none; font-size: 0.85rem; font-weight: 700;">
+        &larr; Volver al Panel de Recepción
+      </a>
+      <h1 class="section-title" style="margin: 0.5rem 0 0 0; font-size: 1.85rem;">Inscripción de Socio en Mostrador</h1>
+      <p style="color: var(--brand-text-muted); margin: 0.25rem 0 0 0; font-size: 0.95rem;">
+        Alta inmediata en un solo paso: perfil, membresía activa, recaudación contable y generación de Pase QR.
+      </p>
+    </div>
+  </div>
+
+  <div class="form-card" style="padding: 2rem;">
+    <form method="post" id="enroll-form">
+      {% csrf_token %}
+
+      <!-- Paso 1: Antecedentes del Socio -->
+      <h3 style="color: #fff; font-size: 1.15rem; margin-top: 0; margin-bottom: 1.25rem; border-left: 4px solid var(--brand-yellow); padding-left: 0.75rem;">
+        1. Datos Personales y de Contacto
+      </h3>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label" for="first_name">Nombres *</label>
+          <input type="text" name="first_name" id="first_name" required class="form-control" value="{{ form_data.first_name|default:'' }}" placeholder="Ej: Rodrigo Andrés">
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label" for="last_name">Apellidos *</label>
+          <input type="text" name="last_name" id="last_name" required class="form-control" value="{{ form_data.last_name|default:'' }}" placeholder="Ej: Morales Castro">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label" for="rut">RUT Chileno (con guión y dígito) *</label>
+          <input type="text" name="rut" id="rut" required class="form-control" value="{{ form_data.rut|default:'' }}" placeholder="Ej: 18.765.432-1">
+          <small style="color: var(--brand-text-muted); font-size: 0.75rem;">Se valida formato y dígito verificador módulo 11.</small>
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label" for="email">Correo Electrónico *</label>
+          <input type="email" name="email" id="email" required class="form-control" value="{{ form_data.email|default:'' }}" placeholder="socio@ejemplo.cl">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label" for="phone">Teléfono Móvil *</label>
+          <input type="tel" name="phone" id="phone" required class="form-control" value="{{ form_data.phone|default:'' }}" placeholder="+56 9 1234 5678">
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label" for="emergency_contact">Contacto de Emergencia</label>
+          <input type="text" name="emergency_contact" id="emergency_contact" class="form-control" value="{{ form_data.emergency_contact|default:'' }}" placeholder="Nombre y fono (ej: Mamá +569...)">
+        </div>
+      </div>
+
+      <!-- Paso 2: Selección de Plan y Tarifa -->
+      <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 1.25rem; border-left: 4px solid var(--brand-yellow); padding-left: 0.75rem;">
+        2. Plan de Entrenamiento y Cobro
+      </h3>
+
+      <div class="form-group">
+        <label class="form-label" for="plan_id">Plan Deportivo Seleccionado *</label>
+        <select name="plan_id" id="plan_id" required class="form-control" style="background: #181818; color: #fff; font-size: 0.95rem;">
+          {% for p in active_plans %}
+            <option value="{{ p.id }}" data-monthly="{{ p.monthly_price }}" data-enrollment="{{ p.enrollment_price }}" data-name="{{ p.name }}" {% if forloop.first %}selected{% endif %}>
+              {{ p.name }} — Mensualidad: ${{ p.monthly_price|floatformat:0 }} CLP + Matrícula: ${{ p.enrollment_price|floatformat:0 }} CLP
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Resumen de Cobro Calculado (Solo Lectura) -->
+      <div style="background: #161616; border: 1.5px solid var(--brand-yellow); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--brand-yellow); font-weight: 800; letter-spacing: 0.5px;">
+          Resumen de Liquidación en Mostrador (Monto Fijo Oficial)
+        </span>
+        <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.9rem; color: #bbb;">
+          <span>Primer mes:</span>
+          <strong style="color: #fff;" id="lbl-monthly">$0 CLP</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 0.25rem; font-size: 0.9rem; color: #bbb;">
+          <span>Matrícula de inscripción:</span>
+          <strong style="color: #fff;" id="lbl-enrollment">$0 CLP</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #333; font-size: 1.15rem;">
+          <strong style="color: #fff;">TOTAL A COBRAR:</strong>
+          <strong style="color: var(--brand-yellow); font-size: 1.35rem;" id="lbl-total">$0 CLP</strong>
+        </div>
+      </div>
+
+      <!-- Paso 3: Método de Pago -->
+      <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 1.25rem; border-left: 4px solid var(--brand-yellow); padding-left: 0.75rem;">
+        3. Medio de Pago Recibido
+      </h3>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label" for="method">Método de Pago *</label>
+          <select name="method" id="method" required class="form-control" style="background: #181818; color: #fff;">
+            <option value="CASH">Efectivo en Caja</option>
+            <option value="TRANSFER">Transferencia Bancaria</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin: 0;" id="grp-receipt">
+          <label class="form-label" for="receipt_number">N° de Comprobante / Operación</label>
+          <input type="text" name="receipt_number" id="receipt_number" class="form-control" placeholder="Obligatorio si es transferencia">
+          <small style="color: var(--brand-text-muted); font-size: 0.75rem;">Exigido por auditoría para transferencias bancarias.</small>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
+        <button type="submit" class="btn btn-yellow" style="padding: 0.85rem 1.75rem; font-size: 1rem; font-weight: 800;">
+          <i class="fa-solid fa-check"></i> Inscribir Socio y Emitir Pase QR
+        </button>
+        <a href="{% url 'reception-home' %}" class="btn btn-dark" style="padding: 0.85rem 1.25rem;">
+          Cancelar
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var planSelect = document.getElementById('plan_id');
+    var lblMonthly = document.getElementById('lbl-monthly');
+    var lblEnrollment = document.getElementById('lbl-enrollment');
+    var lblTotal = document.getElementById('lbl-total');
+    var methodSelect = document.getElementById('method');
+    var receiptInput = document.getElementById('receipt_number');
+
+    function updatePrices() {
+      var opt = planSelect.options[planSelect.selectedIndex];
+      if (opt) {
+        var m = parseInt(opt.getAttribute('data-monthly')) || 0;
+        var e = parseInt(opt.getAttribute('data-enrollment')) || 0;
+        var total = m + e;
+        lblMonthly.textContent = '$' + m.toLocaleString('es-CL') + ' CLP';
+        lblEnrollment.textContent = '$' + e.toLocaleString('es-CL') + ' CLP';
+        lblTotal.textContent = '$' + total.toLocaleString('es-CL') + ' CLP';
+      }
+    }
+
+    function toggleReceipt() {
+      if (methodSelect.value === 'TRANSFER') {
+        receiptInput.setAttribute('required', 'required');
+        receiptInput.style.borderColor = 'var(--brand-yellow)';
+      } else {
+        receiptInput.removeAttribute('required');
+        receiptInput.style.borderColor = '#444';
+      }
+    }
+
+    planSelect.addEventListener('change', updatePrices);
+    methodSelect.addEventListener('change', toggleReceipt);
+
+    updatePrices();
+    toggleReceipt();
+  });
+</script>
+{% endblock %}
+

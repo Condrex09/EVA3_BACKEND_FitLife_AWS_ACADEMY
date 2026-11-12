@@ -51,8 +51,8 @@
     </div>
 
     {% if SHOW_DEMO_CREDENTIALS %}
-    <!-- Tarjeta de credenciales demo para la defensa evaluativa -->
-    <div id="demo-credentials-card" style="margin-top: 1.5rem; background: #161616; border: 1.5px solid var(--brand-yellow); border-radius: var(--border-radius); padding: 1.25rem 1.5rem;">
+    <!-- Tarjeta 1: Cuenta de Administrador (Demo) -->
+    <div id="demo-credentials-admin-card" style="margin-top: 1.5rem; background: #161616; border: 1.5px solid var(--brand-yellow); border-radius: var(--border-radius); padding: 1.25rem 1.5rem;">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
         <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-yellow); font-weight: 800;">
           <i class="fa-solid fa-shield-halved"></i> Cuenta de administrador (demo)
@@ -63,23 +63,52 @@
       </div>
 
       <div style="font-size: 0.85rem; line-height: 1.6; color: var(--brand-text-muted);">
-        <div><strong style="color: #fff;">Usuario:</strong> <code style="color: var(--brand-yellow); background: #222; padding: 2px 6px; border-radius: 4px;" id="demo-user-val">{{ DEMO_ADMIN_USER }}</code> <span style="font-size: 0.75rem;">(o {{ DEMO_ADMIN_EMAIL }})</span></div>
-        <div style="margin-top: 4px;"><strong style="color: #fff;">Contraseña:</strong> <code style="color: var(--brand-yellow); background: #222; padding: 2px 6px; border-radius: 4px;" id="demo-pass-val">{{ DEMO_ADMIN_PASSWORD }}</code></div>
+        <div><strong style="color: #fff;">Usuario:</strong> <code style="color: var(--brand-yellow); background: #222; padding: 2px 6px; border-radius: 4px;" id="demo-admin-user-val">{{ DEMO_ADMIN_USER }}</code> <span style="font-size: 0.75rem;">(o {{ DEMO_ADMIN_EMAIL }})</span></div>
+        <div style="margin-top: 4px;"><strong style="color: #fff;">Contraseña:</strong> <code style="color: var(--brand-yellow); background: #222; padding: 2px 6px; border-radius: 4px;" id="demo-admin-pass-val">{{ DEMO_ADMIN_PASSWORD }}</code></div>
+      </div>
+    </div>
+
+    <!-- Tarjeta 2: Cuenta de Recepcionista (Demo) -->
+    <div id="demo-credentials-reception-card" style="margin-top: 1rem; background: #161616; border: 1.5px solid var(--brand-yellow); border-radius: var(--border-radius); padding: 1.25rem 1.5rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-yellow); font-weight: 800;">
+          <i class="fa-solid fa-id-badge"></i> Cuenta de recepcionista (demo)
+        </span>
+        <button type="button" id="btn-autocomplete-reception" class="btn btn-yellow btn-sm" style="font-size: 0.75rem; padding: 4px 10px;">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Autocompletar
+        </button>
+      </div>
+
+      <p style="font-size: 0.75rem; color: #a0a0a0; margin: 0 0 0.75rem 0;">
+        Acceso limitado: control de acceso, socios, clases del día y aforo
+      </p>
+
+      <div style="font-size: 0.85rem; line-height: 1.6; color: var(--brand-text-muted);">
+        <div><strong style="color: #fff;">Usuario:</strong> <code style="color: var(--brand-yellow); background: #222; padding: 2px 6px; border-radius: 4px;" id="demo-rec-user-val">{{ DEMO_RECEPTION_USER }}</code> <span style="font-size: 0.75rem;">(o {{ DEMO_RECEPTION_EMAIL }})</span></div>
+        <div style="margin-top: 4px;"><strong style="color: #fff;">Contraseña:</strong> <code style="color: var(--brand-yellow); background: #222; padding: 2px 6px; border-radius: 4px;" id="demo-rec-pass-val">{{ DEMO_RECEPTION_PASSWORD }}</code></div>
       </div>
     </div>
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        var btn = document.getElementById('btn-autocomplete-admin');
-        if (btn) {
-          btn.addEventListener('click', function() {
-            var userInput = document.getElementById('{{ form.username.id_for_label }}');
-            var passInput = document.getElementById('{{ form.password.id_for_label }}');
-            if (userInput && passInput) {
-              userInput.value = '{{ DEMO_ADMIN_USER }}';
-              passInput.value = '{{ DEMO_ADMIN_PASSWORD }}';
-              userInput.focus();
-            }
+        var userInput = document.getElementById('{{ form.username.id_for_label }}');
+        var passInput = document.getElementById('{{ form.password.id_for_label }}');
+
+        var btnAdmin = document.getElementById('btn-autocomplete-admin');
+        if (btnAdmin && userInput && passInput) {
+          btnAdmin.addEventListener('click', function() {
+            userInput.value = '{{ DEMO_ADMIN_USER }}';
+            passInput.value = '{{ DEMO_ADMIN_PASSWORD }}';
+            userInput.focus();
+          });
+        }
+
+        var btnRec = document.getElementById('btn-autocomplete-reception');
+        if (btnRec && userInput && passInput) {
+          btnRec.addEventListener('click', function() {
+            userInput.value = '{{ DEMO_RECEPTION_USER }}';
+            passInput.value = '{{ DEMO_RECEPTION_PASSWORD }}';
+            userInput.focus();
           });
         }
       });

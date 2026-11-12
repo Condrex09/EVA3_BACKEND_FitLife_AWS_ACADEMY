@@ -270,6 +270,8 @@ def validate_and_record_access(qr_token_str: str, scanned_by=None) -> dict:
         result=AccessResult.ALLOWED
     )
 
+    today = timezone.localdate()
+    days_left = (membership.end_date - today).days if membership.end_date else 0
     return {
         'allowed': True,
         'status': 'ALLOWED',
@@ -279,6 +281,8 @@ def validate_and_record_access(qr_token_str: str, scanned_by=None) -> dict:
         'rut': profile.formatted_rut,
         'plan_name': membership.plan.name,
         'end_date': membership.end_date.strftime('%d/%m/%Y'),
+        'days_remaining': days_left,
+        'expiring_soon': (0 <= days_left <= 7),
         'message': f'¡Acceso Permitido! Se registró {direction_label} correctamente.',
         'timestamp': timezone.localtime(log.timestamp).strftime('%H:%M:%S')
     }
