@@ -31,6 +31,8 @@ CSRF_TRUSTED_ORIGINS = config(
     cast=Csv()
 )
 
+SHOW_DEMO_CREDENTIALS = config('SHOW_DEMO_CREDENTIALS', default=True, cast=bool)
+
 # Application definition
 INSTALLED_APPS = [
     # Django Core
@@ -62,6 +64,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'apps.website.middleware.AdminAccessRestrictionMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'apps.website.middleware.NotFoundRedirectMiddleware',
 ]

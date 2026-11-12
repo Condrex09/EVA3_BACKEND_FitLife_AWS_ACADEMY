@@ -41,7 +41,12 @@ class User(AbstractUser):
 
     @property
     def is_reception(self) -> bool:
-        return self.role in [UserRole.RECEPTION, UserRole.ADMIN] or self.is_staff
+        return self.role in [UserRole.RECEPTION, UserRole.ADMIN]
+
+    must_change_password = models.BooleanField(
+        default=False,
+        verbose_name='Debe cambiar contraseña'
+    )
 
     @property
     def is_member(self) -> bool:

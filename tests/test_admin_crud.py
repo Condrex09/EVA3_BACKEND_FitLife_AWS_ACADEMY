@@ -107,6 +107,7 @@ class AdminCRUDPermissionsTestCase(TestCase):
             instructor_name='Profesor Test',
             room='Sala A',
             start_datetime=timezone.now() + timedelta(days=1),
+            end_datetime=timezone.now() + timedelta(days=1, hours=1),
             capacity=20,
             status=SessionStatus.SCHEDULED
         )

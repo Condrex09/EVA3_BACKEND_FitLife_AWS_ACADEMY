@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from django.conf import settings
+from django.contrib import messages
 
 class DynamicCSRFTrustedOriginMiddleware:
     """
@@ -21,6 +22,28 @@ class DynamicCSRFTrustedOriginMiddleware:
                 settings.CSRF_TRUSTED_ORIGINS.append(origin)
             if origin_port not in settings.CSRF_TRUSTED_ORIGINS:
                 settings.CSRF_TRUSTED_ORIGINS.append(origin_port)
+
+        return self.get_response(request)
+
+
+class AdminAccessRestrictionMiddleware:
+    """
+    Bloquea el acceso a /admin/ para usuarios autenticados sin permisos de staff
+    (como personal de recepción o socios), redirigiéndolos de manera
+    amable a su panel con el mensaje: 'El panel de administración es solo para administradores'.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.path.startswith('/admin/'):
+            # Solo interceptar usuarios autenticados que no sean staff
+            if hasattr(request, 'user') and request.user.is_authenticated and not request.user.is_staff:
+                messages.warning(request, "El panel de administración es solo para administradores.")
+                if getattr(request.user, 'role', None) == 'RECEPTION':
+                    return redirect('reception-home')
+                return redirect('profile')
 
         return self.get_response(request)
 
@@ -47,3 +70,34 @@ class NotFoundRedirectMiddleware:
                 return redirect('home')
 
         return response
+
+
+class MustChangePasswordMiddleware:
+    """
+    Intercepta peticiones de socios (MEMBER) que tienen must_change_password=True
+    y los redirige a /mi-cuenta/perfil/ hasta que cambien su contraseña temporal.
+    Permite el acceso a logout, estáticos, media y la propia página de perfil.
+    """
+
+    ALLOWED_PATHS = ('/logout/', '/static/', '/media/', '/mi-cuenta/perfil/')
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        from apps.accounts.models import UserRole
+        user = getattr(request, 'user', None)
+
+        if (
+            user is not None
+            and user.is_authenticated
+            and getattr(user, 'role', None) == UserRole.MEMBER
+            and getattr(user, 'must_change_password', False)
+        ):
+            path = request.path_info
+            if not any(path.startswith(p) for p in self.ALLOWED_PATHS):
+                messages.warning(request, "Por seguridad, cambia tu contraseña temporal.")
+                from django.urls import reverse
+                return redirect(reverse('member-profile'))
+
+        return self.get_response(request)

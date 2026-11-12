@@ -153,6 +153,14 @@ class Payment(models.Model):
         limit_choices_to={'role': UserRole.MEMBER},
         verbose_name=_('Socio')
     )
+    registered_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='registered_payments',
+        verbose_name=_('Registrado por')
+    )
     amount = models.PositiveIntegerField(_('Monto pagado (CLP)'))
     concept = models.CharField(
         _('Concepto'),

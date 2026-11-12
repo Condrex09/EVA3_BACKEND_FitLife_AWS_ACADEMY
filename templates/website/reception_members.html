@@ -11,9 +11,17 @@
         <i class="fa-solid fa-users" style="color: var(--brand-yellow);"></i> Búsqueda de Socios
       </h1>
     </div>
-    <a href="{% url 'reception-access' %}" class="btn btn-yellow btn-sm">
-      <i class="fa-solid fa-qrcode"></i> Volver a Control de Acceso
-    </a>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <a href="{% url 'reception-enroll' %}" class="btn btn-yellow btn-sm" style="font-weight: 800;">
+        <i class="fa-solid fa-user-plus"></i> Inscribir Nuevo Socio
+      </a>
+      <a href="{% url 'reception-home' %}" class="btn btn-outline-yellow btn-sm">
+        <i class="fa-solid fa-id-badge"></i> Mostrador
+      </a>
+      <a href="{% url 'reception-access' %}" class="btn btn-dark btn-sm">
+        <i class="fa-solid fa-qrcode"></i> Control de Acceso
+      </a>
+    </div>
   </div>
 
   <div class="form-card" style="margin-bottom: 2.5rem;">

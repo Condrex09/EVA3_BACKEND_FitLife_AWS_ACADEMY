@@ -111,10 +111,10 @@ class MembershipAdmin(admin.ModelAdmin):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ['reference', 'member', 'amount_clp', 'concept', 'method', 'status_badge', 'paid_at']
+    list_display = ['reference', 'member', 'amount_clp', 'concept', 'method', 'registered_by', 'status_badge', 'paid_at']
     list_filter = ['status', 'concept', 'method', 'paid_at']
-    search_fields = ['reference', 'member__username', 'member__first_name', 'member__last_name', 'member__profile__rut']
-    autocomplete_fields = ['member']
+    search_fields = ['reference', 'member__username', 'member__first_name', 'member__last_name', 'member__profile__rut', 'registered_by__username']
+    autocomplete_fields = ['member', 'registered_by']
     date_hierarchy = 'paid_at'
     readonly_fields = ['reference', 'paid_at']
     actions = ['action_approve_payments', export_to_csv]
